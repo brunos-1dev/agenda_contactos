@@ -1,62 +1,78 @@
 @extends('layouts.app')
-@section('title', 'Agenda de Contactos')
-@section('content')
-<div class="container mt-4">
-    <h2>Nuevo Contacto</h2>
 
-    <form action="{{ route('contacts.store') }}" method="POST" novalidate>
+@section('title', 'Crear Contacto')
+
+@section('content')
+<div class="container">
+    <h2 class="mb-4 text-center">Nuevo Contacto</h2>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('contacts.store') }}" method="POST">
         @csrf
 
-        <div class="mb-3">
-            <label for="dni" class="form-label">DNI</label>
-            <input type="number"
-                   class="form-control @error('dni') is-invalid @enderror"
-                   id="dni" name="dni"
-                   value="{{ old('dni') }}"
-                   required>
-            @error('dni')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+        <div class="row mb-3">
+            <div class="col">
+                <label for="dni" class="form-label">DNI</label>
+                <input type="number" class="form-control" name="dni" required>
+            </div>
+            <div class="col">
+                <label for="ni" class="form-label">NI</label>
+                <input type="text" class="form-control" name="ni">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" name="nombre" required>
+            </div>
+            <div class="col">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" name="apellido">
+            </div>
         </div>
 
         <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre</label>
-            <input type="text"
-                   class="form-control @error('nombre') is-invalid @enderror"
-                   id="nombre" name="nombre"
-                   value="{{ old('nombre') }}"
-                   required maxlength="20">
-            @error('nombre')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email"
-                   class="form-control @error('email') is-invalid @enderror"
-                   id="email" name="email"
-                   value="{{ old('email') }}"
-                   required maxlength="30">
-            @error('email')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <label for="domicilio" class="form-label">Domicilio</label>
+            <input type="text" class="form-control" name="domicilio">
         </div>
 
         <div class="mb-3">
             <label for="telefono" class="form-label">Teléfono</label>
-            <input type="tel"
-                   class="form-control @error('telefono') is-invalid @enderror"
-                   id="telefono" name="telefono"
-                   value="{{ old('telefono') }}"
-                   required>
-            @error('telefono')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <input type="text" class="form-control" name="telefono" required>
         </div>
 
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="{{ route('contacts.index') }}" class="btn btn-secondary ms-2">Cancelar</a>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="contacto_emergencia" class="form-label">Contacto de Emergencia</label>
+            <input type="text" class="form-control" name="contacto_emergencia">
+        </div>
+
+        <div class="mb-4">
+            <label for="departamento_id" class="form-label">Departamento</label>
+            <select class="form-select" name="departamento_id">
+                <option value="">Seleccione</option>
+                @foreach ($departamentos as $dep)
+                    <option value="{{ $dep->id }}">{{ $dep->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{{ route('contacts.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 @endsection

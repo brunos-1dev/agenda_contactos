@@ -7,9 +7,9 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-  <div class="container">
-    <a class="navbar-brand" href="{{ url('/') }}">Agenda</a>
-  </div>
+    <div class="container">
+        <a class="navbar-brand" href="{{ url('/') }}">Inicio</a>
+    </div>
 </nav>
 
 <div class="container">

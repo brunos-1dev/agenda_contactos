@@ -1,38 +1,51 @@
 @extends('layouts.app')
-@section('title', 'Agenda de Contactos')
+
+@section('title', 'Listado de Contactos')
+
 @section('content')
 <div class="container">
-    <h1>Contactos</h1>
+    <h2 class="mb-4 text-center">Listado de Contactos</h2>
 
-    @if(session('success'))
+    @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <a href="{{ route('contacts.create') }}" class="btn btn-primary mb-3">Crear nuevo contacto</a>
+    <a href="{{ route('contacts.create') }}" class="btn btn-success mb-3">Nuevo Contacto</a>
 
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>DNI</th>
                 <th>Nombre</th>
-                <th>Email</th>
+                <th>Apellido</th>
+                <th>NI</th>
                 <th>Teléfono</th>
+                <th>Email</th>
+                <th>Domicilio</th>
+                <th>Contacto Emergencia</th>
+                <th>Departamento</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($contacts as $contact)
+            @foreach ($contacts as $contact)
                 <tr>
                     <td>{{ $contact->dni }}</td>
                     <td>{{ $contact->nombre }}</td>
-                    <td>{{ $contact->email }}</td>
+                    <td>{{ $contact->apellido }}</td>
+                    <td>{{ $contact->ni }}</td>
                     <td>{{ $contact->telefono }}</td>
+                    <td>{{ $contact->email }}</td>
+                    <td>{{ $contact->domicilio }}</td>
+                    <td>{{ $contact->contacto_emergencia }}</td>
+                    <td>{{ $contact->departamento?->nombre ?? '-' }}</td>
                     <td>
-                        <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-sm btn-warning">Editar</a>
+
                         <form action="{{ route('contacts.destroy', $contact->dni) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar contacto?')">Eliminar</button>
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que desea eliminar?')">Eliminar</button>
                         </form>
                     </td>
                 </tr>
