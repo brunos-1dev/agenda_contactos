@@ -19,11 +19,11 @@
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>NI</th>
-                <th>Teléfono</th>
+                 <!--<th>Teléfono</th>
                 <th>Email</th>
                 <th>Domicilio</th>
-                <th>Contacto Emergencia</th>
-                <th>Departamento</th>
+                <th>Contacto de Emergencia</th>
+                <th>Departamento</th>-->
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -34,11 +34,12 @@
                     <td>{{ $contact->nombre }}</td>
                     <td>{{ $contact->apellido }}</td>
                     <td>{{ $contact->ni }}</td>
-                    <td>{{ $contact->telefono }}</td>
+                    <!--<td>{{ $contact->telefono }}</td>
                     <td>{{ $contact->email }}</td>
                     <td>{{ $contact->domicilio }}</td>
                     <td>{{ $contact->contacto_emergencia }}</td>
-                    <td>{{ $contact->departamento?->nombre ?? '-' }}</td>
+                    <td>{{ $contact->departamento_id ?? 'Sin departamento' }}</td>-->
+
                     <td>
                         <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-sm btn-warning">Editar</a>
 

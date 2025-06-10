@@ -16,5 +16,19 @@ class Contact extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['dni', 'nombre', 'email', 'telefono']; // Campos que se pueden llenar masivamente
+    protected $fillable = [
+    'dni',
+    'nombre',
+    'apellido',
+    'ni',
+    'domicilio',
+    'telefono',
+    'email',
+    'contacto_emergencia',
+    'departamento_id',]; // Agregá departamento_id aquí
+
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'departamento_id');
+    }
 }

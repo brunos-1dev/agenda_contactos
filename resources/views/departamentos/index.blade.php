@@ -16,7 +16,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
+
                 <th>Nombre</th>
                 <th>Acciones</th>
             </tr>
@@ -24,7 +24,7 @@
         <tbody>
             @foreach($departamentos as $departamento)
                 <tr>
-                    <td>{{ $departamento->id }}</td>
+
                     <td>{{ $departamento->nombre }}</td>
                     <td>
                         <a href="{{ route('departamentos.edit', $departamento) }}" class="btn btn-sm btn-warning">Editar</a>

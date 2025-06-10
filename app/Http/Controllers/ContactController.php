@@ -3,96 +3,91 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
-use Illuminate\Http\Request;
 use App\Models\Departamento;
+use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
-    // Mostrar lista de contactos
+    // Mostrar lista
     public function index()
     {
-
         $contacts = Contact::all();
         return view('contacts.index', compact('contacts'));
     }
 
-    // Mostrar formulario para crear contacto
-
-
-
+    // Mostrar formulario de creación
     public function create()
     {
-     $departamentos = \App\Models\Departamento::all();
-    return view('contacts.create', compact('departamentos'));
+        $departamentos = Departamento::all();
+        return view('contacts.create', compact('departamentos'));
     }
 
-    // Guardar nuevo contacto
+    // Guardar nuevo contacto (carga manual)
     public function store(Request $request)
     {
         $request->validate([
-            'dni'               => 'required|integer|unique:contacto,dni',
-        'nombre'            => 'required|string|max:20',
-        'apellido'          => 'nullable|string|max:50',
-        'ni'                => 'nullable|string|max:20',
-        'domicilio'         => 'nullable|string|max:100',
-        'contacto_emergencia'=> 'nullable|string|max:100',
-        'email'             => 'required|email|max:30|unique:contacto,email',
-        'telefono'          => 'required|integer',
-        'departamento_id'   => 'nullable|exists:departamento,id',
+            'dni'                 => 'required|integer|unique:contacto,dni',
+            'nombre'              => 'required|string|max:20',
+            'apellido'            => 'nullable|string|max:50',
+            'ni'                  => 'nullable|string|max:20',
+            'domicilio'           => 'nullable|string|max:100',
+            'contacto_emergencia' => 'nullable|string|max:100',
+            'email'               => 'required|email|max:30|unique:contacto,email',
+            'telefono'            => 'required|integer',
+            'departamento_id'     => 'nullable|exists:departamento,id',
         ]);
 
-        Contact::create($request->only([
-    'dni',
-    'nombre',
-    'apellido',
-    'ni',
-    'domicilio',
-    'telefono',
-    'email',
-    'contacto_emergencia',
-    'departamento_id'
-        ]));
-
-
+        $contact = new Contact();
+        $contact->dni = $request->dni;
+        $contact->nombre = $request->nombre;
+        $contact->apellido = $request->apellido;
+        $contact->ni = $request->ni;
+        $contact->domicilio = $request->domicilio;
+        $contact->telefono = $request->telefono;
+        $contact->email = $request->email;
+        $contact->contacto_emergencia = $request->contacto_emergencia;
+        $contact->departamento_id = $request->departamento_id;
+        $contact->save();
 
         return redirect()->route('contacts.index')->with('success', 'Contacto creado exitosamente.');
     }
 
-    // Mostrar formulario para editar contacto
+    // Mostrar formulario de edición
     public function edit($dni)
     {
-    $contact = Contact::findOrFail($dni);
-    $departamentos = Departamento::all();
-    return view('contacts.edit', compact('contact', 'departamentos'));
+        $contact = Contact::findOrFail($dni);
+        $departamentos = Departamento::all();
+        return view('contacts.edit', compact('contact', 'departamentos'));
     }
 
+    // Actualizar contacto (también con asignación manual)
+    public function update(Request $request, $dni)
+    {
+        $contact = Contact::findOrFail($dni);
 
-    // Actualizar contacto
- public function update(Request $request, $dni)
-{
-     dd('Antes de todo', $dni);
-   // $contact = Contact::findOrFail($dni);
+        $request->validate([
+            'nombre'              => 'required|string|max:20',
+            'apellido'            => 'nullable|string|max:50',
+            'ni'                  => 'nullable|string|max:20',
+            'domicilio'           => 'nullable|string|max:100',
+            'contacto_emergencia' => 'nullable|string|max:100',
+            'email'               => 'required|email|max:30|unique:contacto,email,' . $dni . ',dni',
+            'telefono'            => 'required|integer',
+            'departamento_id'     => 'nullable|exists:departamento,id',
+        ]);
 
-    // $request->validate([
-        //'nombre'              => 'required|string|max:20',
-        //'apellido'            => 'nullable|string|max:50',
-        //'ni'                  => 'nullable|string|max:20',
-        //'domicilio'           => 'nullable|string|max:100',
-        //'contacto_emergencia' => 'nullable|string|max:100',
-        //'email'               => 'required|email|max:30|unique:contacto,email,' . $dni . ',dni',
-        //'telefono'            => 'required|integer',
-       // 'departamento_id'     => 'nullable|exists:departamento,id',
-   // ]);
+        $contact->nombre = $request->nombre;
+        $contact->apellido = $request->apellido;
+        $contact->ni = $request->ni;
+        $contact->domicilio = $request->domicilio;
+        $contact->telefono = $request->telefono;
+        $contact->email = $request->email;
+        $contact->contacto_emergencia = $request->contacto_emergencia;
+        $contact->departamento_id = $request->departamento_id;
+        $contact->save();
 
-    // TEST: ver si llega acá
-
-
-    // $contact->update($request->all());
-
-    // return redirect()->route('contacts.index')->with('success', 'Contacto actualizado exitosamente.');
-}
-
-
+        return redirect()->route('contacts.index')->with('success', 'Contacto actualizado exitosamente.');
+    }
 
     // Eliminar contacto
     public function destroy($dni)
