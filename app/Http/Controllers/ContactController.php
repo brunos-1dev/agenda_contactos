@@ -8,12 +8,32 @@ use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
+ public function show($dni)
+{
+    $contact = Contact::findOrFail($dni);
+    $departamentos = Departamento::all();
+    return view('contacts.show', compact('contact', 'departamentos'));
+}
+
+
+
     // Mostrar lista
-    public function index()
-    {
-        $contacts = Contact::all();
-        return view('contacts.index', compact('contacts'));
+    public function index(Request $request)
+{
+    $query = Contact::query();
+
+    if ($request->has('search')) {
+        $search = $request->search;
+        $query->where('nombre', 'like', "%$search%")
+              ->orWhere('apellido', 'like', "%$search%")
+              ->orWhere('dni', 'like', "%$search%");
     }
+
+    $contacts = $query->get();
+
+    return view('contacts.index', compact('contacts'));
+}
+
 
     // Mostrar formulario de creación
     public function create()
