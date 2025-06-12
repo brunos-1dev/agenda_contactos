@@ -38,7 +38,7 @@
                     <td>{{ $contact->email }}</td>
                     <td>{{ $contact->domicilio }}</td>
                     <td>{{ $contact->contacto_emergencia }}</td>
-                    <td>{{ $contact->departamento?->nombre ?? '-' }}</td>
+                    <td>{{ $contact->departamento_id->nombre ?? '-' }}</td>
                     <td>
                         <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-sm btn-warning">Editar</a>
 
