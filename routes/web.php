@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DepartamentoController;
+use App\Http\Controllers\AplicacionController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -13,3 +14,5 @@ Route::get('/', function () {
 
 Route::resource('contacts', ContactController::class);
 Route::resource('departamentos', DepartamentoController::class);
+
+Route::resource('aplicaciones', AplicacionController::class);
