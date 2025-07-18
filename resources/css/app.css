@@ -1,11 +1,119 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1e3a8a;
+    color: #f8f9fa;
+    min-height: 100vh;
+    margin: 0;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+.menu-btn img {
+    width: 240px;
+    height: 240px;
+}
+
+.menu-btn-text {
+    margin-top: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1e3a8a;
+    user-select: none;
+}
+
+.menu-btn {
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #1e3a8a;
+    padding: 20px;
+    border-radius: 50%;
+}
+
+.menu-btn img {
+    width: 240px;
+    height: 240px;
+}
+
+.menu-btn-text {
+    margin-top: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1e3a8a;
+    user-select: none;
+}
+
+.menu-btn {
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+}
+
+.carousel-item a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    user-select: none;
+}
+
+#carouselMenu {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(44, 47, 63, 0.8);
+    padding: 30px;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: transparent;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%231e3a8a' viewBox='0 0 16 16'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%231e3a8a' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+h1, h4 {
+    color: #f8f9fa;
+}
+/* Placeholder claro */
+.placeholder-light::placeholder {
+    color: #ccc;
+}
+
+/* Botón personalizado gris */
+.btn-outline-gray {
+    color: #999;
+    border-color: #999;
+    background-color: transparent;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-outline-gray:hover {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
 }

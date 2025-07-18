@@ -8,16 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Aplicacion extends Model
 {
     protected $table = 'aplicacion';
+    protected $primaryKey = 'id';
+    public $timestamps = false;
 
-    // Indica que la clave primaria es 'id_aplicacion'
-    protected $primaryKey = 'id_aplicacion';
-
-    // Si fuera distinta la columna autoincremental, pero aquí sí lo es
-    public $incrementing = true;
-
-    // Si quieres usar timestamps (created_at / updated_at)
-    public $timestamps = true;
-
-    // Campos que puedes rellenar masivamente
     protected $fillable = ['nombre'];
+
+    public function contactos()
+    {
+        return $this->belongsToMany(Contacto::class, 'aplicacion_contacto', 'id', 'dni');
+    }
+
 }

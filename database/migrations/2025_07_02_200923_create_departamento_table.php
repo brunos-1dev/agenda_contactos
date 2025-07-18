@@ -12,15 +12,17 @@ return new class extends Migration
     public function up()
 {
     Schema::create('departamento', function (Blueprint $table) {
-        $table->id();
-        $table->string('nombre')->unique();
-        $table->timestamps();
+        $table->id(); // campo "id" autoincremental
+        $table->string('nombre');
     });
 }
 
-public function down()
-{
-    Schema::dropIfExists('departamento');
-}
 
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('departamento');
+    }
 };

@@ -7,9 +7,14 @@ use Illuminate\Http\Request;
 
 class AplicacionController extends Controller
 {
-    public function index()
+     public function index(Request $request)
     {
-        $aplicaciones = Aplicacion::all();
+        $search = $request->input('search');
+
+        $aplicaciones = Aplicacion::when($search, function ($query, $search) {
+            return $query->where('nombre', 'like', "%{$search}%");
+        })->get();
+
         return view('aplicaciones.index', compact('aplicaciones'));
     }
 
@@ -21,10 +26,10 @@ class AplicacionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100',
+            'nombre' => 'required|string|max:255',
         ]);
 
-        Aplicacion::create($request->all());
+        Aplicacion::create($request->only('nombre'));
 
         return redirect()->route('aplicaciones.index')->with('success', 'Aplicación creada correctamente.');
     }
@@ -37,22 +42,21 @@ class AplicacionController extends Controller
 
     public function update(Request $request, $id)
     {
-        $aplicacion = Aplicacion::findOrFail($id);
-
         $request->validate([
-            'nombre' => 'required|string|max:100',
+            'nombre' => 'required|string|max:255',
         ]);
 
+        $aplicacion = Aplicacion::findOrFail($id);
         $aplicacion->update($request->only('nombre'));
 
-        return redirect()->route('aplicaciones.index')
-                         ->with('success', 'Aplicación actualizada correctamente.');
+        return redirect()->route('aplicaciones.index')->with('success', 'Aplicación actualizada correctamente.');
     }
 
     public function destroy($id)
     {
-        Aplicacion::destroy($id);
-        return redirect()->route('aplicaciones.index')
-                         ->with('success', 'Aplicación eliminada correctamente.');
+        $aplicacion = Aplicacion::findOrFail($id);
+        $aplicacion->delete();
+
+        return redirect()->route('aplicaciones.index')->with('success', 'Aplicación eliminada correctamente.');
     }
 }

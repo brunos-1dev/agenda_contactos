@@ -8,11 +8,16 @@ use Illuminate\Http\Request;
 class DepartamentoController extends Controller
 {
     // Mostrar lista de departamentos
-    public function index()
-    {
-        $departamentos = Departamento::all();
-        return view('departamentos.index', compact('departamentos'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $departamentos = Departamento::when($search, function ($query, $search) {
+        return $query->where('nombre', 'like', "%{$search}%");
+    })->get();
+
+    return view('departamentos.index', compact('departamentos'));
+}
 
     // Mostrar formulario para crear departamento
     public function create()

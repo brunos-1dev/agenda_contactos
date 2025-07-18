@@ -6,29 +6,36 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
-    protected $table = 'contacto';  // <-- Aquí indicamos el nombre exacto de la tabla
+    protected $table = 'contacto';
 
-    protected $primaryKey = 'dni';  // Si tu clave primaria es dni y no 'id'
+    protected $primaryKey = 'dni';
 
-    public $incrementing = false;   // Si el DNI no es autoincremental
+    public $incrementing = false;
 
-    protected $keyType = 'int';     // Si el dni es entero
+    protected $keyType = 'int';
 
     public $timestamps = false;
 
     protected $fillable = [
-    'dni',
-    'nombre',
-    'apellido',
-    'ni',
-    'domicilio',
-    'telefono',
-    'email',
-    'contacto_emergencia',
-    'departamento_id',]; // Agregá departamento_id aquí
+        'dni',
+        'nombre',
+        'apellido',
+        'ni',
+        'domicilio',
+        'telefono',
+        'email',
+        'contacto_emergencia',
+        'departamento_id',
+    ];
 
     public function departamento()
     {
         return $this->belongsTo(Departamento::class, 'departamento_id');
+    }
+
+    public function aplicaciones()
+    {
+        return $this->belongsToMany(Aplicacion::class, 'aplicacion_contacto', 'dni', 'id')
+                    ->withPivot('nombre_usuario'); // <- agregamos campo extra
     }
 }

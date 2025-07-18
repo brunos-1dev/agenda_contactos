@@ -4,42 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\Departamento;
+use App\Models\Aplicacion;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
- public function show($dni)
-{
-    $contact = Contact::findOrFail($dni);
-    $departamentos = Departamento::all();
-    return view('contacts.show', compact('contact', 'departamentos'));
-}
-
-
+    public function show($dni)
+    {
+        $contact = Contact::findOrFail($dni);
+        $departamentos = Departamento::all();
+        return view('contacts.show', compact('contact', 'departamentos'));
+    }
 
     // Mostrar lista
     public function index(Request $request)
-{
-    $query = Contact::query();
+    {
+        $query = Contact::query();
 
-    if ($request->has('search')) {
-        $search = $request->search;
-        $query->where('nombre', 'like', "%$search%")
-              ->orWhere('apellido', 'like', "%$search%")
-              ->orWhere('dni', 'like', "%$search%");
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('nombre', 'like', "%$search%")
+                ->orWhere('apellido', 'like', "%$search%")
+                ->orWhere('dni', 'like', "%$search%");
+        }
+
+        $contacts = $query->get();
+
+        return view('contacts.index', compact('contacts'));
     }
-
-    $contacts = $query->get();
-
-    return view('contacts.index', compact('contacts'));
-}
-
 
     // Mostrar formulario de creación
     public function create()
     {
         $departamentos = Departamento::all();
-        return view('contacts.create', compact('departamentos'));
+        $aplicaciones = Aplicacion::all();
+        return view('contacts.create', compact('departamentos', 'aplicaciones'));
     }
 
     // Guardar nuevo contacto (carga manual)
@@ -55,6 +54,9 @@ class ContactController extends Controller
             'email'               => 'required|email|max:30|unique:contacto,email',
             'telefono'            => 'required|integer',
             'departamento_id'     => 'nullable|exists:departamento,id',
+            'aplicaciones'        => 'array|exists:aplicacion,id',
+            'nombre_usuario'      => 'array',  // validación para el array de nombres de usuario
+            'nombre_usuario.*'    => 'nullable|string|max:50', // validación para cada nombre_usuario
         ]);
 
         $contact = new Contact();
@@ -69,6 +71,15 @@ class ContactController extends Controller
         $contact->departamento_id = $request->departamento_id;
         $contact->save();
 
+        if ($request->has('aplicaciones')) {
+            $syncData = [];
+            foreach ($request->input('aplicaciones') as $appId) {
+                $nombreUsuario = $request->input("nombre_usuario.$appId");
+                $syncData[$appId] = ['nombre_usuario' => $nombreUsuario];
+            }
+            $contact->aplicaciones()->sync($syncData);
+        }
+
         return redirect()->route('contacts.index')->with('success', 'Contacto creado exitosamente.');
     }
 
@@ -77,7 +88,15 @@ class ContactController extends Controller
     {
         $contact = Contact::findOrFail($dni);
         $departamentos = Departamento::all();
-        return view('contacts.edit', compact('contact', 'departamentos'));
+        $aplicaciones = Aplicacion::all();
+
+        // Cargar los ids de aplicaciones seleccionadas
+        $aplicacionesSeleccionadas = $contact->aplicaciones()->pluck('aplicacion.id')->toArray();
+
+        // Cargar datos pivote para nombre_usuario
+        $pivotData = $contact->aplicaciones()->get()->keyBy('id');
+
+        return view('contacts.edit', compact('contact', 'departamentos', 'aplicaciones', 'aplicacionesSeleccionadas', 'pivotData'));
     }
 
     // Actualizar contacto (también con asignación manual)
@@ -94,6 +113,9 @@ class ContactController extends Controller
             'email'               => 'required|email|max:30|unique:contacto,email,' . $dni . ',dni',
             'telefono'            => 'required|integer',
             'departamento_id'     => 'nullable|exists:departamento,id',
+            'aplicaciones'        => 'array|exists:aplicacion,id',
+            'nombre_usuario'      => 'array',
+            'nombre_usuario.*'    => 'nullable|string|max:50',
         ]);
 
         $contact->nombre = $request->nombre;
@@ -105,6 +127,17 @@ class ContactController extends Controller
         $contact->contacto_emergencia = $request->contacto_emergencia;
         $contact->departamento_id = $request->departamento_id;
         $contact->save();
+
+        if ($request->has('aplicaciones')) {
+            $syncData = [];
+            foreach ($request->input('aplicaciones') as $appId) {
+                $nombreUsuario = $request->input("nombre_usuario.$appId");
+                $syncData[$appId] = ['nombre_usuario' => $nombreUsuario];
+            }
+            $contact->aplicaciones()->sync($syncData);
+        } else {
+            $contact->aplicaciones()->sync([]);
+        }
 
         return redirect()->route('contacts.index')->with('success', 'Contacto actualizado exitosamente.');
     }
