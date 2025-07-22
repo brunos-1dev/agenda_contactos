@@ -117,3 +117,7 @@ h1, h4 {
     color: white;
     border-color: #6c757d;
 }
+.navbar-custom {
+    background-color: rgba(19, 20, 20, 0.95); /* un poquito translúcido */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* sombrita sutil */
+}

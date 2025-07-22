@@ -9,30 +9,41 @@
     @vite('resources/css/app.css')
 
     
-
-
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container d-flex justify-content-between align-items-center">
-    <div>
-        <a class="navbar-brand" href="{{ url('/') }}">Inicio</a>
-        <a class="navbar-brand" href="{{ route('contacts.index') }}">Personas</a>
-        <a class="navbar-brand" href="{{ route('departamentos.index') }}">Departamentos</a>
-        <a class="navbar-brand" href="{{ route('aplicaciones.index') }}">Aplicaciones</a>
-        <a class="navbar-brand" href="#">Usuarios</a>
-    </div>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
 
-    <div>
+
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url('/') }}">Inicio</a>
+
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('contacts.index') }}">Personas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('departamentos.index') }}">Departamentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('aplicaciones.index') }}">Aplicaciones</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Usuarios</a>
+            </li>
+        </ul>
+
         @auth
-            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+            <form method="POST" action="{{ route('logout') }}" class="d-flex">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-outline-light">Cerrar Sesión</button>
+                <button class="btn btn-outline-info btn-sm">Cerrar sesión</button>
+
+
             </form>
         @endauth
     </div>
-</div>
 </nav>
+
+
 
 <div class="container">
     {{-- Aquí va el contenido de cada vista --}}

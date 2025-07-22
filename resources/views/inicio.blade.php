@@ -42,6 +42,14 @@
                     <div class="menu-btn-text">APLICACIONES</div>
                 </a>
             </div>
+
+            <div class="carousel-item" data-bs-interval="5000">
+                <a href="{{ route('aplicaciones.index') }}" class="menu-btn">
+                    <img src="{{ asset('images/usuarios.jpg') }}" alt="Usuarios" class="mb-2" />
+                    <div class="menu-btn-text">USUARIOS</div>
+                </a>
+            </div>
+
         </div>
 
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselMenu" data-bs-slide="prev">
