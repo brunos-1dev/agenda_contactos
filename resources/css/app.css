@@ -8,116 +8,122 @@ body {
     color: #f8f9fa;
     min-height: 100vh;
     margin: 0;
+text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.menu-btn img {
-    width: 240px;
-    height: 240px;
+/* === NAVBAR CUSTOM === */
+.navbar-custom {
+    background-color: rgba(19, 20, 20, 0.95);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    padding-top: 0;
+    padding-bottom: 0;
+
 }
 
-.menu-btn-text {
-    margin-top: 0.5rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #1e3a8a;
-    user-select: none;
+.navbar-nav .nav-link {
+    color: #ffffff !important;
+
 }
 
-.menu-btn {
-    text-align: center;
-    transition: transform 0.3s ease-in-out;
-}
-
-.menu-btn:hover {
-    transform: scale(1.05);
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    background-color: #1e3a8a;
-    padding: 20px;
-    border-radius: 50%;
-}
-
-.menu-btn img {
-    width: 240px;
-    height: 240px;
-}
-
-.menu-btn-text {
-    margin-top: 0.5rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #1e3a8a;
-    user-select: none;
-}
-
-.menu-btn {
-    text-align: center;
-    transition: transform 0.3s ease-in-out;
-}
-
-.menu-btn:hover {
-    transform: scale(1.05);
-}
-
-.carousel-item a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.navbar-nav .nav-link:hover {
+    color: #00bfff !important; /* Azul celeste brillante */
     text-decoration: none;
-    user-select: none;
+    transition: color 0.3s ease;
 }
 
-#carouselMenu {
+.navbar .btn-outline-gray {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.navbar .btn-outline-gray:hover {
     background-color: #ffffff;
+    color: #1e3a8a;
+    border-color: #ffffff;
+}
+
+/* === MENÚ PRINCIPAL === */
+.menu-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: nowrap;
+}
+
+.menu-card {
+    background: #fff;
     border-radius: 20px;
     box-shadow: 0 8px 20px rgba(44, 47, 63, 0.8);
-    padding: 30px;
-    max-width: 420px;
-    margin: 0 auto;
+    padding: 1rem;
+    width: 240px;
+    height: 310px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform: scale(0.9);
+    opacity: 0.9;
+    text-decoration: none;
 }
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    background-color: transparent;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    border-radius: 50%;
-    width: 2rem;
-    height: 2rem;
+.menu-card:hover {
+    transform: scale(1.05);
+    opacity: 1;
+    z-index: 1;
 }
 
-.carousel-control-prev-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%231e3a8a' viewBox='0 0 16 16'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
+.menu-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
 }
 
-.carousel-control-next-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%231e3a8a' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+.menu-btn-text {
+    margin-top: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #1e3a8a;
+    user-select: none;
+    text-align: center;
+    padding: 0;
+    text-transform: uppercase;
+    word-break: break-word;
 }
 
-h1, h4 {
+/* === TÍTULOS === */
+h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #f8f9fa;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+h4 {
     color: #f8f9fa;
 }
-/* Placeholder claro */
+
+/* === PLACEHOLDER LIGHT === */
 .placeholder-light::placeholder {
     color: #ccc;
 }
 
-/* Botón personalizado gris */
-.btn-outline-gray {
-    color: #999;
-    border-color: #999;
-    background-color: transparent;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-}
 
 .btn-outline-gray:hover {
-    background-color: #6c757d;
-    color: white;
-    border-color: #6c757d;
+    background-color: #ffffff;
+    color: #1e3a8a;
+    border-color: #ffffff;
 }
-.navbar-custom {
-    background-color: rgba(19, 20, 20, 0.95); /* un poquito translúcido */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* sombrita sutil */
+
+.btn-outline-info {
+    color: #ffffff;
+    border-color: #ffffff;
+    background-color: transparent;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .btn-outline-light:hover {
+    background-color: transparent;
+    color: #00bfff;
+    border-color: #00bfff;
+    transition: all 0.3s ease;
 }
