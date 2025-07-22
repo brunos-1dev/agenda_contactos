@@ -8,13 +8,30 @@
 
     @vite('resources/css/app.css')
 
+    
+
 
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container">
+    <div class="container d-flex justify-content-between align-items-center">
+    <div>
         <a class="navbar-brand" href="{{ url('/') }}">Inicio</a>
+        <a class="navbar-brand" href="{{ route('contacts.index') }}">Personas</a>
+        <a class="navbar-brand" href="{{ route('departamentos.index') }}">Departamentos</a>
+        <a class="navbar-brand" href="{{ route('aplicaciones.index') }}">Aplicaciones</a>
+        <a class="navbar-brand" href="#">Usuarios</a>
     </div>
+
+    <div>
+        @auth
+            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-light">Cerrar Sesión</button>
+            </form>
+        @endauth
+    </div>
+</div>
 </nav>
 
 <div class="container">
