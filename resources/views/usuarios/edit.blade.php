@@ -68,8 +68,8 @@
             @enderror
         </div>
 
-        <button class="btn btn-outline-gray me-2">Actualizar</button>
-        <a href="{{ route('usuarios.index') }}" class="btn btn-outline-gray">Cancelar</a>
+        <button class="btn btn-outline-light px-4">Actualizar</button>
+        <a href="{{ route('usuarios.index') }}" class="btn btn-outline-light px-4">Cancelar</a>
     </form>
 </div>
 @endsection

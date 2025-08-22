@@ -20,11 +20,11 @@
                        style="width: 350px;"
                        placeholder="Buscar por nombre"
                        value="{{ request('search') }}">
-                <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+                <button type="submit" class="btn btn-outline-light px-4">Buscar</button>
             </div>
         </form>
 
-        <a href="{{ route('departamentos.create') }}" class="btn btn-outline-secondary">Nuevo Departamento</a>
+        <a href="{{ route('departamentos.create') }}" class="btn btn-outline-light px-4">Nuevo Departamento</a>
     </div>
 
     <table class="table table-dark table-hover text-center align-middle">

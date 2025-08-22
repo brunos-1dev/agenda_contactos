@@ -111,8 +111,8 @@
             @endforeach
         </div>
 
-        <button type="submit" class="btn btn-outline-gray me-2">Actualizar</button>
-        <a href="{{ route('contacts.index') }}" class="btn btn-outline-gray">Cancelar</a>
+        <button type="submit" class="btn btn-outline-light px-4">Actualizar</button>
+        <a href="{{ route('contacts.index') }}" class="btn btn-outline-light px-4">Cancelar</a>
     </form>
 </div>
 

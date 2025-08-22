@@ -3,8 +3,12 @@
 @section('title', 'Listado de Contactos')
 
 @section('content')
+
+
 <div class="container">
     <h2 class="mb-4 text-center text-white">Listado del Personal</h2>
+
+   
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <form action="{{ route('contacts.index') }}" method="GET" class="d-flex mb-3 justify-content-between align-items-center">
@@ -15,13 +19,11 @@
                        style="width: 350px;"
                        placeholder="Buscar por DNI, nombre o apellido"
                        value="{{ request('search') }}">
-                <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+                <button type="submit" class="btn btn-outline-light px-4">Buscar</button>
             </div>
         </form>
 
-        @if (auth()->user()->rol === 'admin')
-            <a href="{{ route('contacts.create') }}" class="btn btn-outline-secondary">Nuevo Contacto</a>
-        @endif
+        <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">Nuevo Contacto</a>
     </div>
 
     <table class="table table-dark table-hover text-center align-middle">
@@ -45,15 +47,12 @@
                     <td>{{ $contact->departamento->nombre ?? 'Sin asignar' }}</td>
                     <td>
                         <a href="{{ route('contacts.show', $contact->dni) }}" class="btn btn-outline-info btn-sm me-1">Ver</a>
-
-                        @if (auth()->user()->rol === 'admin')
-                            <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
-                            <form action="{{ route('contacts.destroy', $contact->dni) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Seguro que desea eliminar?')">Eliminar</button>
-                            </form>
-                        @endif
+                        <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
+                        <form action="{{ route('contacts.destroy', $contact->dni) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Seguro que desea eliminar?')">Eliminar</button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

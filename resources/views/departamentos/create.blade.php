@@ -26,8 +26,8 @@
             @enderror
         </div>
 
-        <button class="btn btn-outline-gray me-2">Guardar</button>
-        <a href="{{ route('departamentos.index') }}" class="btn btn-outline-gray">Cancelar</a>
+        <button class="btn btn-outline-light px-4">Guardar</button>
+        <a href="{{ route('departamentos.index') }}" class="btn btn-outline-light px-4">Cancelar</a>
     </form>
 </div>
 @endsection

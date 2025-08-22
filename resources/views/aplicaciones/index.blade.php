@@ -15,11 +15,11 @@
         <form action="{{ route('aplicaciones.index') }}" method="GET" class="d-flex mb-3 justify-content-between align-items-center">
             <div class="d-flex">
                 <input type="text" name="search" class="form-control me-2 bg-dark text-white border-secondary placeholder-light" style="width: 350px;" placeholder="Buscar por nombre" value="{{ request('search') }}">
-                <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+                <button type="submit" class="btn btn-outline-light px-4">Buscar</button>
             </div>
         </form>
 
-        <a href="{{ route('aplicaciones.create') }}" class="btn btn-outline-secondary">Nueva Aplicación</a>
+        <a href="{{ route('aplicaciones.create') }}" class="btn btn-outline-light px-4">Nueva Aplicación</a>
     </div>
 
     <table class="table table-dark table-hover text-center align-middle">
