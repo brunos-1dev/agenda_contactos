@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Departamento;
 use Illuminate\Http\Request;
+use App\Exports\DepartamentosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DepartamentoController extends Controller
 {
@@ -65,5 +67,10 @@ class DepartamentoController extends Controller
         $departamento->delete();
 
         return redirect()->route('departamentos.index')->with('success', 'Departamento eliminado exitosamente.');
+    }
+    // Exportar todos los departamentos a Excel
+    public function export()
+    {
+        return Excel::download(new DepartamentosExport, 'departamentos.xlsx');
     }
 }

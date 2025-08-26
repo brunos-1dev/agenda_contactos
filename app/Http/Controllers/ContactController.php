@@ -6,6 +6,8 @@ use App\Models\Contact;
 use App\Models\Departamento;
 use App\Models\Aplicacion;
 use Illuminate\Http\Request;
+use App\Exports\ContactsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ContactController extends Controller
 {
@@ -148,5 +150,11 @@ class ContactController extends Controller
         $contact = Contact::findOrFail($dni);
         $contact->delete();
         return redirect()->route('contacts.index')->with('success', 'Contacto eliminado exitosamente.');
+    }
+    // Exportar contactos a Excel
+    public function export(Request $request)
+    {
+        $search = $request->input('search');
+        return Excel::download(new ContactsExport($search), 'contacts.xlsx');
     }
 }

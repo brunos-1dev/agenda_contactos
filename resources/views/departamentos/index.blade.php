@@ -25,6 +25,7 @@
         </form>
 
         <a href="{{ route('departamentos.create') }}" class="btn btn-outline-light px-4">Nuevo Departamento</a>
+        <a href="{{ route('departamentos.export') }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
     </div>
 
     <table class="table table-dark table-hover text-center align-middle">
