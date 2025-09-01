@@ -26,7 +26,7 @@
                 <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('contacts.index') }}">Personas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('departamentos.index') }}">Departamentos</a>
+                <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('organizaciones.index') }}">Departamentos</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('aplicaciones.index') }}">Aplicaciones</a>
