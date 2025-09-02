@@ -17,7 +17,7 @@
                 placeholder="Buscar por nombre o tipo (Dirección, Subdirección, Departamento, División, etc.)"
                 style="width: 420px;"
             >
-            <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+            <button type="submit" class="btn btn-outline-light px-4">Buscar</button>
 
             @if(!empty($search))
                 <a href="{{ route('organizaciones.index') }}" class="btn btn-outline-light">Limpiar</a>
@@ -27,13 +27,13 @@
         <div class="d-flex gap-2">
             {{-- Botón Exportar (si tienes la ruta y el export configurado) --}}
             <a href="{{ route('organizaciones.export', ['search' => $search ?? '']) }}"
-               class="btn btn-outline-secondary">
+               class="btn btn-outline-success px-4">
                 Exportar Excel
             </a>
 
             {{-- Botón Nueva Organización (muestra sólo si usas rol admin) --}}
             @if(auth()->check() && (auth()->user()->rol ?? null) === 'admin')
-                <a href="{{ route('organizaciones.create') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('organizaciones.create') }}" class="btn btn-outline-light px-4">
                     Nueva Organización
                 </a>
             @endif

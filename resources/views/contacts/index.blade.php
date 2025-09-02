@@ -18,7 +18,7 @@
                     placeholder="Buscar por DNI, nombre o apellido"
                     value="{{ request('search') }}"
                 >
-                <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+                <button type="submit" class="btn btn-outline-light px-4">Buscar</button>
             </div>
         </form>
 
@@ -36,10 +36,8 @@
                 </a>
             </div>
 
-
-                <a href="{{ route('contacts.create') }}" class="btn btn-outline-secondary ms-2">Nuevo Contacto</a>
-   <a href="{{ route('contacts.export', ['search' => request('search')]) }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
-
+            <a href="{{ route('contacts.export', ['search' => request('search')]) }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
+            <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">Nuevo Contacto</a>
         </div>
     </div>
 
@@ -66,22 +64,19 @@
                                 {{ $contact->nombre }}
                             </div>
 
-
-
                             {{-- DNI y NI en la misma línea --}}
                             <div class="people-meta">
                                 <span><strong>DNI:</strong> {{ $contact->dni }}</span>
-                                  <br>
+                                <br>
                                 <span><strong>NI:</strong> {{ $contact->ni }}</span>
                             </div>
-                             <br>
+                            <br>
 
-                            {{-- Departamento como chip (1 línea, truncado si es largo) --}}
-
+                            {{-- Organización como chip (1 línea, truncado si es largo) --}}
                             <div class="mt-1">
                                 <span class="people-dept-chip"
-                                      title="{{ $contact->departamento->nombre ?? 'Sin asignar' }}">
-                                    {{ $contact->departamento->nombre ?? 'Sin asignar' }}
+                                      title="{{ $contact->organizacion->nombre ?? 'Sin asignar' }}">
+                                    {{ $contact->organizacion->nombre ?? 'Sin asignar' }}
                                 </span>
                             </div>
 
@@ -93,7 +88,7 @@
             @endforeach
         </div>
 
-    {{-- ===== VISTA LISTA (sin cambios) ===== --}}
+    {{-- ===== VISTA LISTA ===== --}}
     @else
         <table class="table table-dark table-hover text-center align-middle">
             <thead class="table-dark">
@@ -102,7 +97,7 @@
                     <th>Nombre</th>
                     <th>Apellido</th>
                     <th>NI</th>
-                    <th>Departamento</th>
+                    <th>Organización</th>
                     <th style="width: 260px;">Acciones</th>
                 </tr>
             </thead>
@@ -113,7 +108,7 @@
                         <td>{{ $contact->nombre }}</td>
                         <td>{{ $contact->apellido }}</td>
                         <td>{{ $contact->ni }}</td>
-                        <td>{{ $contact->departamento->nombre ?? 'Sin asignar' }}</td>
+                        <td>{{ $contact->organizacion->nombre ?? 'Sin asignar' }}</td>
                         <td>
                             <a href="{{ route('contacts.show', $contact->dni) }}" class="btn btn-outline-info btn-sm me-1">Ver</a>
                             @if (auth()->user()->rol === 'admin')

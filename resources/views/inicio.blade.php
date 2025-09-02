@@ -16,8 +16,8 @@
         <img src="{{ asset('images/persona3.png') }}" alt="Personas">
         <div class="menu-btn-text">PERSONAS</div>
     </a>
-    <a href="{{ route('departamentos.index') }}" class="menu-card">
-        <img src="{{ asset('images/depto2.png') }}" alt="Departamentos">
+    <a href="{{ route('organizaciones.index') }}" class="menu-card">
+        <img src="{{ asset('images/depto2.png') }}" alt="Organizaciones">
         <div class="menu-btn-text">DEPARTAMENTOS</div>
     </a>
     <a href="{{ route('aplicaciones.index') }}" class="menu-card">

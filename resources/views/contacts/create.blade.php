@@ -3,7 +3,6 @@
 @section('title', 'Crear Contacto')
 
 @section('content')
-
 <div class="container text-white">
     <h2 class="mb-4 text-white text-center">Nuevo Contacto</h2>
 
@@ -20,93 +19,157 @@
     <form action="{{ route('contacts.store') }}" method="POST">
         @csrf
 
+        {{-- 1) DNI y CUIL --}}
         <div class="row mb-3">
-            <div class="col">
-                <label for="dni" class="form-label">DNI</label>
+            <div class="col-md-6">
+                <label for="dni" class="form-label">DNI *</label>
                 <input type="number"
                        class="form-control bg-dark text-white border-secondary placeholder-light"
-                       name="dni" required
+                       name="dni" id="dni" required
                        placeholder="Ingrese DNI"
                        value="{{ old('dni') }}">
             </div>
-            <div class="col">
-                <label for="ni" class="form-label">NI</label>
+            <div class="col-md-6">
+                <label for="cuil" class="form-label">CUIL</label>
                 <input type="text"
                        class="form-control bg-dark text-white border-secondary placeholder-light"
-                       name="ni"
-                       placeholder="Ingrese NI"
-                       value="{{ old('ni') }}">
+                       name="cuil" id="cuil"
+                       maxlength="11" inputmode="numeric" pattern="\d{0,11}"
+                       placeholder="Ingrese CUIL"
+                       value="{{ old('cuil') }}">
             </div>
         </div>
 
+        {{-- 2) Nombre y Apellido --}}
         <div class="row mb-3">
-            <div class="col">
-                <label for="nombre" class="form-label">Nombre</label>
+            <div class="col-md-6">
+                <label for="nombre" class="form-label">Nombre *</label>
                 <input type="text"
                        class="form-control bg-dark text-white border-secondary placeholder-light"
-                       name="nombre" required
+                       name="nombre" id="nombre" required
                        placeholder="Ingrese nombre"
                        value="{{ old('nombre') }}">
             </div>
-            <div class="col">
+            <div class="col-md-6">
                 <label for="apellido" class="form-label">Apellido</label>
                 <input type="text"
                        class="form-control bg-dark text-white border-secondary placeholder-light"
-                       name="apellido"
+                       name="apellido" id="apellido"
                        placeholder="Ingrese apellido"
                        value="{{ old('apellido') }}">
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="domicilio" class="form-label">Domicilio</label>
-            <input type="text"
-                   class="form-control bg-dark text-white border-secondary placeholder-light"
-                   name="domicilio"
-                   placeholder="Ingrese domicilio"
-                   value="{{ old('domicilio') }}">
+        {{-- 3) Organización --}}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="organizacion_id" class="form-label">Organización</label>
+                <select class="form-select bg-dark text-white border-secondary placeholder-light"
+                        name="organizacion_id" id="organizacion_id">
+                    <option value="">— Seleccionar —</option>
+                    @foreach($orgs as $o)
+                        <option value="{{ $o->id }}" {{ old('organizacion_id') == $o->id ? 'selected' : '' }}>
+                            {{ $o->label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="telefono" class="form-label">Teléfono</label>
-            <input type="text"
-                   class="form-control bg-dark text-white border-secondary placeholder-light"
-                   name="telefono" required
-                   placeholder="Ingrese teléfono"
-                   value="{{ old('telefono') }}">
+        {{-- 4) IUP y NI (juntos) --}}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="iup" class="form-label">IUP</label>
+                <input type="text"
+                       class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="iup" id="iup"
+                       placeholder="Ingrese IUP"
+                       value="{{ old('iup') }}">
+            </div>
+            <div class="col-md-6">
+                <label for="ni" class="form-label">NI</label>
+                <input type="text"
+                       class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="ni" id="ni"
+                       placeholder="Ingrese NI"
+                       value="{{ old('ni') }}">
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email"
-                   class="form-control bg-dark text-white border-secondary placeholder-light"
-                   name="email" required
-                   placeholder="Ingrese email"
-                   value="{{ old('email') }}">
+        {{-- 6) Jerarquía (select) --}}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="jerarquia" class="form-label">Jerarquía</label>
+                <select name="jerarquia" id="jerarquia"
+                        class="form-select bg-dark text-white border-secondary placeholder-light">
+                    <option value="">— Seleccionar —</option>
+                    <option value="Suboficial"           {{ old('jerarquia') === 'Suboficial' ? 'selected' : '' }}>Suboficial</option>
+                    <option value="Oficial"              {{ old('jerarquia') === 'Oficial' ? 'selected' : '' }}>Oficial</option>
+                    <option value="Subinspector"         {{ old('jerarquia') === 'Subinspector' ? 'selected' : '' }}>Subinspector</option>
+                    <option value="Inspector"            {{ old('jerarquia') === 'Inspector' ? 'selected' : '' }}>Inspector</option>
+                    <option value="Subcomisario"         {{ old('jerarquia') === 'Subcomisario' ? 'selected' : '' }}>Subcomisario</option>
+                    <option value="Comisario"            {{ old('jerarquia') === 'Comisario' ? 'selected' : '' }}>Comisario</option>
+                    <option value="Comisario Supervisor" {{ old('jerarquia') === 'Comisario Supervisor' ? 'selected' : '' }}>Comisario Supervisor</option>
+                    <option value="Subdirector"          {{ old('jerarquia') === 'Subdirector' ? 'selected' : '' }}>Subdirector</option>
+                    <option value="Director"             {{ old('jerarquia') === 'Director' ? 'selected' : '' }}>Director</option>
+                    <option value="Director General"     {{ old('jerarquia') === 'Director General' ? 'selected' : '' }}>Director General</option>
+                </select>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="contacto_emergencia" class="form-label">Contacto de Emergencia</label>
-            <input type="text"
-                   class="form-control bg-dark text-white border-secondary placeholder-light"
-                   name="contacto_emergencia"
-                   placeholder="Ingrese contacto de emergencia"
-                   value="{{ old('contacto_emergencia') }}">
+        {{-- 7) Domicilio y Localidad --}}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="domicilio" class="form-label">Domicilio</label>
+                <input type="text"
+                       class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="domicilio" id="domicilio"
+                       placeholder="Ingrese domicilio"
+                       value="{{ old('domicilio') }}">
+            </div>
+            <div class="col-md-6">
+                <label for="localidad" class="form-label">Localidad</label>
+                <input type="text"
+                       class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="localidad" id="localidad"
+                       placeholder="Ingrese localidad"
+                       value="{{ old('localidad') }}">
+            </div>
         </div>
 
-        <div class="mb-4">
-            <label for="departamento_id" class="form-label">Departamento</label>
-            <select class="form-select bg-dark text-white border-secondary placeholder-light" name="departamento_id">
-                <option value="" class="text-muted">Seleccione</option>
-                @foreach($departamentos as $departamento)
-                    <option value="{{ $departamento->id }}" {{ old('departamento_id') == $departamento->id ? 'selected' : '' }}>
-                        {{ $departamento->nombre }}
-                    </option>
-                @endforeach
-            </select>
+        {{-- 8) Teléfono y Teléfono de Emergencia --}}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="telefono" class="form-label">Teléfono *</label>
+                <input type="number"
+                       class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="telefono" id="telefono" required
+                       placeholder="Ingrese teléfono"
+                       value="{{ old('telefono') }}">
+            </div>
+            <div class="col-md-6">
+                <label for="contacto_emergencia" class="form-label">Teléfono de Emergencia</label>
+                <input type="text"
+                       class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="contacto_emergencia" id="contacto_emergencia"
+                       placeholder="Ingrese teléfono de emergencia"
+                       value="{{ old('contacto_emergencia') }}">
+            </div>
         </div>
 
-        {{-- APLICACIONES --}}
+        {{-- 9) Email --}}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email *</label>
+                <input type="email"
+                       class="form-control bg-dark text-white border-secondary placeholder-light"
+                       name="email" id="email" required
+                       placeholder="Ingrese email"
+                       value="{{ old('email') }}">
+            </div>
+        </div>
+
+        {{-- 10) Aplicaciones --}}
         <div class="mb-4">
             <label class="form-label">Aplicaciones</label><br>
             @foreach ($aplicaciones as $aplicacion)
@@ -142,7 +205,6 @@
         </div>
 
         <button type="submit" class="btn btn-outline-light px-4">Guardar</button>
-        
         <a href="{{ route('contacts.index') }}" class="btn btn-outline-light px-4">Cancelar</a>
     </form>
 </div>
@@ -160,15 +222,14 @@
             } else {
                 input.style.display = 'none';
                 input.disabled = true;
-                input.value = ''; // opcional: limpia el campo si se desmarca
+                input.value = '';
             }
         }
 
         checkboxes.forEach(cb => {
-            toggleUsernameField(cb); // para el estado inicial con old()
+            toggleUsernameField(cb); // estado inicial
             cb.addEventListener('change', () => toggleUsernameField(cb));
         });
     });
 </script>
-
 @endsection

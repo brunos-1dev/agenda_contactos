@@ -25,7 +25,7 @@ class OrganizacionesExport implements FromCollection, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return ['ID', 'Nombre', 'Tipo', 'ID Padre', 'Ruta', 'Nivel', 'Orden', 'Activo', 'Creado'];
+        return ['ID', 'Nombre', 'Tipo'];
     }
 
     public function map($row): array
@@ -34,12 +34,7 @@ class OrganizacionesExport implements FromCollection, WithHeadings, WithMapping
             $row->id,
             $row->nombre,
             $row->tipo,
-            $row->id_padre,
-            $row->ruta,
-            $row->nivel,
-            $row->orden,
-            $row->activo ? 'Sí' : 'No',
-            optional($row->created_at)->format('Y-m-d H:i'),
+            
         ];
     }
 }
