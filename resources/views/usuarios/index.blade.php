@@ -25,6 +25,7 @@
         </form>
 
         <a href="{{ route('usuarios.create') }}" class="btn btn-outline-light px-4">Nuevo Usuario</a>
+        <a href="{{ route('usuarios.export') }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
     </div>
 
     <table class="table table-dark table-hover text-center align-middle">

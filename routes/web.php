@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Exports\DepartamentosExport;
 use App\Exports\ContactsExport;
+use App\Exports\UsuariosExport;
 
 // Página de inicio pública
 Route::get('/', function () {
@@ -22,6 +23,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('departamentos/export', [DepartamentoController::class, 'export'])->name('departamentos.export');
 Route::get('contacts/export', [ContactController::class, 'export'])->name('contacts.export');
+Route::get('/usuarios/export', [UserController::class, 'export'])->name('usuarios.export');
 
 
 Route::resource('contacts', ContactController::class);

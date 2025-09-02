@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Exports\UsuariosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -25,22 +27,25 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'nullable|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
-            'rol' => 'required|in:admin,consulta',
+            'nombre'    => 'required|string|max:255',
+            'apellido'  => 'nullable|string|max:255',
+            'email'     => 'required|email|unique:users,email',
+            'password'  => 'required|string|min:6|confirmed',
+            'rol'       => 'required|in:admin,consulta',
         ]);
 
         User::create([
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'rol' => $request->rol,
+            'nombre'          => $request->nombre,
+            'apellido'        => $request->apellido,
+            'email'           => $request->email,
+            'password'        => Hash::make($request->password),
+            'rol'             => $request->rol,
+            'created_by'   => auth()->user()->id,
+            'updated_by'   => auth()->user()->id,
         ]);
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuario creado correctamente.');
     }
 
     // Mostrar formulario de edición
@@ -53,26 +58,43 @@ class UserController extends Controller
     public function update(Request $request, User $usuario)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'nullable|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $usuario->id,
-            'rol' => 'required|in:admin,consulta',
+            'nombre'    => 'required|string|max:255',
+            'apellido'  => 'nullable|string|max:255',
+            'email'     => 'required|email|unique:users,email,' . $usuario->id,
+            'rol'       => 'required|in:admin,consulta',
+            'password'  => 'nullable|string|min:6|confirmed',
         ]);
 
-        $usuario->update([
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'email' => $request->email,
-            'rol' => $request->rol,
-        ]);
+        $data = [
+            'nombre'          => $request->nombre,
+            'apellido'        => $request->apellido,
+            'email'           => $request->email,
+            'rol'             => $request->rol,
+            'updated_by'   => auth()->user()->id,
+        ];
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $usuario->update($data);
+
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuario actualizado correctamente.');
     }
 
     // Eliminar usuario
     public function destroy(User $usuario)
     {
         $usuario->delete();
-        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
+
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuario eliminado correctamente.');
+    }
+
+    // Exportar usuarios a Excel
+    public function export()
+    {
+        return Excel::download(new UsuariosExport, 'usuarios.xlsx');
     }
 }
