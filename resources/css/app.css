@@ -127,3 +127,130 @@ h4 {
     border-color: #00bfff;
     transition: all 0.3s ease;
 }
+
+/* ====== Personas - Card horizontal (1/3 foto, 2/3 datos) ====== */
+.people-h-card {
+  border-radius: 16px;
+  overflow: hidden;                 /* respeta bien el borde en toda la pieza */
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: none;                 /* sin sombra por defecto */
+  min-height: 170px;                /* base */
+  color: #111;                      /* texto negro en toda la card */
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* Hover (elevar) */
+.people-h-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  cursor: pointer;
+}
+
+/* ====== Personas - Card horizontal (compacta/pro) ====== */
+.people-h-card{
+  border-radius:16px;
+  overflow:hidden;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:none;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.people-h-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+  border-color:rgba(0,0,0,.12);
+}
+
+/* Columna de foto */
+.people-h-left{
+  background:#f6f7fb;
+}
+
+/* Imagen */
+.people-h-photo{
+  display:block;
+  width:100%;
+  height:140px;         /* mobile/stack */
+  object-fit:cover;
+  object-position:center;
+}
+
+/* Columna de contenido */
+.people-h-right{
+  flex:1;
+  padding:12px 16px;
+}
+
+/* Tipografía/hierarquía */
+.people-surname{
+  color:#111!important;
+  font-weight:900;
+  letter-spacing:.4px;
+  font-size:1.25rem;
+ text-shadow: none;
+}
+
+.people-name{
+  color:#111!important;
+  font-weight:550;
+  letter-spacing:.3px;
+  margin-top:1px;
+  margin-bottom:5px;
+  font-size:.95rem;
+  text-shadow: none;
+}
+
+/* Chip de departamento (una sola línea) */
+.people-dept-chip{
+  display:inline-block;
+  max-width:100%;
+  padding:.15rem .55rem;
+  border-radius:999px;
+  background:#eef1ff;
+  color:#0b286e;
+  font-weight:700;
+  font-size:.8rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* DNI / NI en la misma línea */
+.people-meta{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:6px;
+  color:#111!important;
+  font-size:.92rem;
+    text-shadow: none;
+}
+
+/* —— Alto fijo y 1/3–2/3 sólo en escritorio —— */
+@media (min-width: 768px){
+  .people-h-card{ height:150px; }     /* MÁS BAJA */
+  .people-h-left{ flex:0 0 150px; }   /* 1/3 aprox */
+  .people-h-photo{
+    height:100%;
+    min-height:150px;                 /* ocupa toda la columna */
+  }
+  .people-h-right{ padding:12px 16px; }
+}
+
+.org-tree { border-radius: 14px; }
+.org-node { margin: .25rem 0; }
+.org-summary {
+  cursor: pointer;
+  background: #fff;
+  border-radius: 12px;
+  padding: .55rem .9rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  display: inline-block;
+}
+.org-children {
+  margin-top: .5rem;
+  border-left: 2px dashed #cbd5e1;
+  padding-left: 1rem;
+}
