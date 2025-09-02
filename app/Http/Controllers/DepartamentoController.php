@@ -4,15 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Departamento;
 use Illuminate\Http\Request;
+use App\Exports\DepartamentosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DepartamentoController extends Controller
 {
     // Mostrar lista de departamentos
-    public function index()
-    {
-        $departamentos = Departamento::all();
-        return view('departamentos.index', compact('departamentos'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $departamentos = Departamento::when($search, function ($query, $search) {
+        return $query->where('nombre', 'like', "%{$search}%");
+    })->get();
+
+    return view('departamentos.index', compact('departamentos'));
+}
 
     // Mostrar formulario para crear departamento
     public function create()
@@ -60,5 +67,10 @@ class DepartamentoController extends Controller
         $departamento->delete();
 
         return redirect()->route('departamentos.index')->with('success', 'Departamento eliminado exitosamente.');
+    }
+    // Exportar todos los departamentos a Excel
+    public function export()
+    {
+        return Excel::download(new DepartamentosExport, 'departamentos.xlsx');
     }
 }

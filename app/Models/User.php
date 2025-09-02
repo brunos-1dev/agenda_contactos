@@ -18,9 +18,13 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nombre',
+        'apellido',
         'email',
         'password',
+        'rol',
+        'created_by',
+        'updated_by',  // <-- agregado
     ];
 
     /**
@@ -44,5 +48,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relación para saber quién creó el usuario
+     */
+    // Relación para creador
+    public function creador()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Relación para actualizador
+    public function actualizador()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

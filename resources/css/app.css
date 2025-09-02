@@ -1,11 +1,129 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1e3a8a !important;
+    color: #f8f9fa;
+    min-height: 100vh;
+    margin: 0;
+text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* === NAVBAR CUSTOM === */
+.navbar-custom {
+    background-color: rgba(19, 20, 20, 0.95);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    padding-top: 0;
+    padding-bottom: 0;
+
+}
+
+.navbar-nav .nav-link {
+    color: #ffffff !important;
+
+}
+
+.navbar-nav .nav-link:hover {
+    color: #00bfff !important; /* Azul celeste brillante */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navbar .btn-outline-gray {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.navbar .btn-outline-gray:hover {
+    background-color: #ffffff;
+    color: #1e3a8a;
+    border-color: #ffffff;
+}
+
+/* === MENÚ PRINCIPAL === */
+.menu-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: nowrap;
+}
+
+.menu-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(44, 47, 63, 0.8);
+    padding: 1rem;
+    width: 240px;
+    height: 310px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform: scale(0.9);
+    opacity: 0.9;
+    text-decoration: none;
+}
+
+.menu-card:hover {
+    transform: scale(1.05);
+    opacity: 1;
+    z-index: 1;
+}
+
+.menu-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.menu-btn-text {
+    margin-top: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #1e3a8a;
+    user-select: none;
+    text-align: center;
+    padding: 0;
+    text-transform: uppercase;
+    word-break: break-word;
+}
+
+/* === TÍTULOS === */
+h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #f8f9fa;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+h4 {
+    color: #f8f9fa;
+}
+
+/* === PLACEHOLDER LIGHT === */
+.placeholder-light::placeholder {
+    color: #ccc;
+}
+
+
+.btn-outline-gray:hover {
+    background-color: #ffffff;
+    color: #1e3a8a;
+    border-color: #ffffff;
+}
+
+.btn-outline-info {
+    color: #ffffff;
+    border-color: #ffffff;
+    background-color: transparent;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .btn-outline-light:hover {
+    background-color: transparent;
+    color: #00bfff;
+    border-color: #00bfff;
+    transition: all 0.3s ease;
 }
