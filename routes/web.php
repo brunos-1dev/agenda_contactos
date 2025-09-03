@@ -8,9 +8,6 @@ use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\AplicacionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrganizacionController;
-use App\Exports\DepartamentosExport;
-use App\Exports\ContactsExport;
-use App\Exports\UsuariosExport;
 
 // Página de inicio (protegida)
 Route::get('/', fn () => view('inicio'))
@@ -29,8 +26,8 @@ Route::get('/organizaciones', [OrganizacionController::class, 'index'])
 Route::get('/organizaciones/export', [OrganizacionController::class, 'export'])
     ->name('organizaciones.export');
 
-// Solo create/store desde el resource (evitamos duplicar el index)
-Route::resource('organizaciones', OrganizacionController::class)->only(['create', 'store']);
+Route::resource('organizaciones', OrganizacionController::class)
+    ->only(['create', 'store', 'edit', 'update']);
 
 // --- Export de otros módulos ---
 Route::get('/departamentos/export', [DepartamentoController::class, 'export'])
@@ -39,7 +36,8 @@ Route::get('/departamentos/export', [DepartamentoController::class, 'export'])
 Route::get('/contacts/export', [ContactController::class, 'export'])
     ->name('contacts.export');
 
-Route::get('/usuarios/export', [UserController::class, 'export'])->name('usuarios.export');
+Route::get('/usuarios/export', [UserController::class, 'export'])
+    ->name('usuarios.export');
 
 // --- CRUDs restantes ---
 Route::resource('contacts', ContactController::class);
