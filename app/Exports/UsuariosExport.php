@@ -11,37 +11,52 @@ class UsuariosExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection()
     {
-        // Traemos todos los usuarios
-        return User::with(['creador', 'actualizador'])->get();
+        return User::with([
+                // Traer organización y quién creó/actualizó
+                'organizacion:id,nombre,tipo',
+                'creador:id,nombre,apellido',
+                'actualizador:id,nombre,apellido',
+            ])
+            ->orderBy('apellido')
+            ->orderBy('nombre')
+            ->get();
     }
 
     public function headings(): array
     {
         return [
-            
             'Nombre',
             'Apellido',
             'Email',
+            'Organización',
             'Rol',
             'Creado por',
             'Actualizado por',
             'Fecha de creación',
-            'Fecha de actualización'
+            'Fecha de actualización',
         ];
     }
 
-    public function map($usuario): array
+    public function map($u): array
     {
+        $org = $u->organizacion;
+        $orgLabel = $org
+            ? $org->nombre . ($org->tipo ? " ({$org->tipo})" : '')
+            : 'Sin asignar';
+
+        $creadoPor = $u->creador ? ($u->creador->nombre.' '.$u->creador->apellido) : '';
+        $actPor    = $u->actualizador ? ($u->actualizador->nombre.' '.$u->actualizador->apellido) : '';
+
         return [
-            $usuario->nombre,
-            $usuario->apellido,
-            $usuario->email,
-            ucfirst($usuario->rol),
-            $usuario->creador ? $usuario->creador->nombre.' '.$usuario->creador->apellido : '',
-            $usuario->actualizador ? $usuario->actualizador->nombre.' '.$usuario->actualizador->apellido : '',
-            $usuario->created_at ? $usuario->created_at->format('d/m/Y H:i') : '',
-            $usuario->updated_at ? $usuario->updated_at->format('d/m/Y H:i') : '',
+            $u->nombre,
+            $u->apellido,
+            $u->email,
+            $orgLabel,
+            ucfirst($u->rol),
+            $creadoPor,
+            $actPor,
+            $u->created_at ? $u->created_at->format('d/m/Y H:i') : '',
+            $u->updated_at ? $u->updated_at->format('d/m/Y H:i') : '',
         ];
     }
-
 }

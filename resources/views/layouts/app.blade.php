@@ -8,6 +8,9 @@
     @vite('resources/css/app.css')
 </head>
 <body>
+    @php
+        $canManage = auth()->check() && in_array(auth()->user()->rol, ['admin', 'superadmin']);
+    @endphp
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
     <div class="container-fluid d-flex justify-content-between align-items-center">
 
@@ -31,9 +34,11 @@
             <li class="nav-item">
                 <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('aplicaciones.index') }}">Aplicaciones</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('usuarios.index') }}">Usuarios</a>
-            </li>
+            @if($canManage)
+                <li class="nav-item">
+                    <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('usuarios.index') }}">Usuarios</a>
+                </li>
+            @endif
         </ul>
 
         {{-- Cerrar sesión a la derecha --}}

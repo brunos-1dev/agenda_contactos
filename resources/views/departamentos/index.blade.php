@@ -7,6 +7,10 @@
 <div class="container">
     <h2 class="mb-4 text-center">Listado de Departamentos</h2>
 
+    @php
+        $canManage = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
+    @endphp
+
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif

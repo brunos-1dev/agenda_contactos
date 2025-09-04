@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'rol',
+        'organizacion_id',
         'created_by',
         'updated_by',  // <-- agregado
     ];
@@ -43,12 +44,18 @@ class User extends Authenticatable
      * @return array<string, string>
      */
     protected function casts(): array
-    {
-        return [
+        {
+            return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-        ];
-    }
+            ];
+        }
+      
+    public function organizacion()
+        {
+            // FQN para evitar problemas de import
+            return $this->belongsTo(\App\Models\Organizacion::class, 'organizacion_id', 'id');
+        }
 
     /**
      * Relación para saber quién creó el usuario

@@ -5,6 +5,9 @@
 @section('content')
 <div class="container">
     <h2 class="mb-4 text-center text-white">Árbol de Organizaciones</h2>
+    @php
+        $canManage = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
+    @endphp
 
     {{-- Barra superior: buscador + acciones --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -31,12 +34,13 @@
                 Exportar Excel
             </a>
 
-            {{-- Botón Nueva Organización (muestra sólo si usas rol admin) --}}
-            @if(auth()->check() && (auth()->user()->rol ?? null) === 'admin')
-                <a href="{{ route('organizaciones.create') }}" class="btn btn-outline-light px-4">
-                    Nueva Organización
-                </a>
-            @endif
+                    {{-- Botón Nueva Organización (admin y superadmin) --}}
+        @if($canManage)
+            <a href="{{ route('organizaciones.create') }}" class="btn btn-outline-light px-4">
+                Nueva Organización
+            </a>
+        @endif
+
         </div>
     </div>
 

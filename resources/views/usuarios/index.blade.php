@@ -24,8 +24,8 @@
             </div>
         </form>
 
+        <a href="{{ route('usuarios.export', ['search' => request('search')]) }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
         <a href="{{ route('usuarios.create') }}" class="btn btn-outline-light px-4">Nuevo Usuario</a>
-        <a href="{{ route('usuarios.export') }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
     </div>
 
     <table class="table table-dark table-hover text-center align-middle">
@@ -34,16 +34,23 @@
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Email</th>
+                <th>Organización</th>
                 <th>Rol</th>
                 <th style="width: 260px;">Acciones</th>
             </tr>
         </thead>
         <tbody>
             @foreach($usuarios as $usuario)
+                @php
+                    $orgNombre = optional($usuario->organizacion)->nombre;
+                    $orgTipo   = optional($usuario->organizacion)->tipo;
+                    $orgLabel  = $orgNombre ? ($orgTipo ? "$orgNombre ($orgTipo)" : $orgNombre) : 'Sin asignar';
+                @endphp
                 <tr>
                     <td>{{ $usuario->nombre }}</td>
                     <td>{{ $usuario->apellido }}</td>
                     <td>{{ $usuario->email }}</td>
+                    <td>{{ $orgLabel }}</td>
                     <td>{{ ucfirst($usuario->rol) }}</td>
                     <td>
                         <a href="{{ route('usuarios.edit', $usuario) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
