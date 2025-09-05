@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Contact;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -33,6 +34,17 @@ class ContactsExport implements FromCollection, WithHeadings, ShouldAutoSize
             });
         }
 
+        // 🌳 Alcance por organización (admin/consulta sólo su subárbol)
+        $auth = Auth::user();
+        if (in_array($auth->rol, ['admin','consulta'])) {
+            if ($auth->organizacion_id) {
+                $ids = app('org')->subtreeIds($auth->organizacion_id);
+                $query->whereIn('organizacion_id', $ids);
+            } else {
+                $query->whereRaw('1=0');
+            }
+        }
+
         $contacts = $query->get();
 
         return $contacts->map(function ($c) {
@@ -58,7 +70,6 @@ class ContactsExport implements FromCollection, WithHeadings, ShouldAutoSize
                 'Apellido'              => $c->apellido ?? '',
                 'Jerarquía'             => $c->jerarquia ?? '',
                 'Organización'          => $organizacion,
-                
                 'Email'                 => $c->email ?? '',
                 'Teléfono'              => $c->telefono ?? '',
                 'Teléfono emergencia'   => $c->contacto_emergencia ?? '',
@@ -80,7 +91,6 @@ class ContactsExport implements FromCollection, WithHeadings, ShouldAutoSize
             'Apellido',
             'Jerarquía',
             'Organización',
-            
             'Email',
             'Teléfono',
             'Teléfono emergencia',

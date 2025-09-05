@@ -12,12 +12,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ContactController extends Controller
 {
-    // ===== Helper: opciones para el <select> de organizaciones (con sangría) =====
+    // Helper: opciones para el <select> de organizaciones (con sangría)
     private function orgOptions()
     {
         return Organizacion::orderBy('ruta')->orderBy('orden')->get()
             ->map(function ($o) {
-                $o->label = str_repeat('— ', max(0, (int)$o->nivel)).$o->nombre;
+                $o->label = str_repeat('— ', max(0, (int)$o->nivel)) . $o->nombre;
                 return $o;
             });
     }
@@ -25,15 +25,18 @@ class ContactController extends Controller
     public function show($dni)
     {
         $contact = Contact::findOrFail($dni);
-        $departamentos = Departamento::all(); // legacy, si aún lo usas en la vista
+        $departamentos = Departamento::all(); // si la vista lo usa
         return view('contacts.show', compact('contact', 'departamentos'));
     }
 
     // Listado
     public function index(Request $request)
     {
+        $auth = auth()->user();
+
         $query = Contact::query();
 
+        // Búsqueda opcional
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(function ($q) use ($s) {
@@ -43,6 +46,16 @@ class ContactController extends Controller
             });
         }
 
+        // Alcance por organización
+        if (in_array($auth->rol, ['admin','consulta'])) {
+            if ($auth->organizacion_id) {
+                $ids = app('org')->subtreeIds($auth->organizacion_id);
+                $query->whereIn('organizacion_id', $ids);
+            } else {
+                $query->whereRaw('1=0'); // fail-safe
+            }
+        }
+
         $contacts = $query->get();
         return view('contacts.index', compact('contacts'));
     }
@@ -50,16 +63,24 @@ class ContactController extends Controller
     // Crear
     public function create()
     {
-        $aplicaciones = Aplicacion::all();
-        $orgs = $this->orgOptions();   // <<<< enviar $orgs a la vista
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
 
-        // (departamentos ya no es necesario si no lo usas en la vista)
+        $aplicaciones = Aplicacion::all();
+        $orgs = $this->orgOptions();
         return view('contacts.create', compact('aplicaciones', 'orgs'));
     }
 
     // Guardar
     public function store(Request $request)
     {
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $jerarquias = [
             'Suboficial','Oficial','Subinspector','Inspector','Subcomisario',
             'Comisario','Comisario Supervisor','Subdirector','Director','Director General'
@@ -86,7 +107,16 @@ class ContactController extends Controller
             'aplicaciones'        => 'array|exists:aplicacion,id',
             'nombre_usuario'      => 'array',
             'nombre_usuario.*'    => 'nullable|string|max:50',
+        ], [
+            'cuil.digits' => 'El CUIL debe tener exactamente 11 dígitos.',
         ]);
+
+        // Admin sólo puede asignar organización dentro de su subárbol
+        if ($auth->rol === 'admin' && $request->filled('organizacion_id')) {
+            if (!app('org')->inSameTree($auth->organizacion_id, (int)$request->organizacion_id)) {
+                return back()->withInput()->with('error', 'Organización fuera de tu alcance.');
+            }
+        }
 
         $contact = new Contact();
         $contact->dni                 = $request->dni;
@@ -101,7 +131,7 @@ class ContactController extends Controller
         $contact->telefono            = $request->telefono;
         $contact->email               = $request->email;
         $contact->contacto_emergencia = $request->contacto_emergencia;
-        $contact->organizacion_id     = $request->organizacion_id ?: null; // puede venir vacío
+        $contact->organizacion_id     = $request->organizacion_id ?: null;
         $contact->save();
 
         if ($request->has('aplicaciones')) {
@@ -118,25 +148,52 @@ class ContactController extends Controller
     // Editar
     public function edit($dni)
     {
-        $contact       = Contact::findOrFail($dni);
-        $aplicaciones  = Aplicacion::all();
-        $aplicSel      = $contact->aplicaciones()->pluck('aplicacion.id')->toArray();
-        $pivotData     = $contact->aplicaciones()->get()->keyBy('id');
-        $orgs          = $this->orgOptions();  // <<<< enviar $orgs a la vista
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
+        $contact = Contact::findOrFail($dni);
+
+        // Admin sólo puede editar contactos de su subárbol
+        if ($auth->rol === 'admin') {
+            if (!$contact->organizacion_id || !app('org')->inSameTree($auth->organizacion_id, (int)$contact->organizacion_id)) {
+                return redirect()->route('contacts.index')->with('error', 'Contacto fuera de tu alcance.');
+            }
+        }
+
+        $aplicaciones = Aplicacion::all();
+        $orgs = $this->orgOptions();
+
+        $pivotUsuarios = [];
+        foreach ($contact->aplicaciones as $a) {
+            $pivotUsuarios[$a->id] = $a->pivot->nombre_usuario;
+        }
 
         return view('contacts.edit', [
-            'contact'                   => $contact,
-            'aplicaciones'              => $aplicaciones,
-            'aplicacionesSeleccionadas' => $aplicSel,
-            'pivotData'                 => $pivotData,
-            'orgs'                      => $orgs,   // <<<<
+            'contact'        => $contact,
+            'aplicaciones'   => $aplicaciones,
+            'orgs'           => $orgs,
+            'pivotUsuarios'  => $pivotUsuarios,
         ]);
     }
 
     // Actualizar
     public function update(Request $request, $dni)
     {
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $contact = Contact::findOrFail($dni);
+
+        // Admin sólo puede actualizar contactos de su subárbol
+        if ($auth->rol === 'admin') {
+            if (!$contact->organizacion_id || !app('org')->inSameTree($auth->organizacion_id, (int)$contact->organizacion_id)) {
+                return redirect()->route('contacts.index')->with('error', 'Contacto fuera de tu alcance.');
+            }
+        }
 
         $jerarquias = [
             'Suboficial','Oficial','Subinspector','Inspector','Subcomisario',
@@ -163,7 +220,16 @@ class ContactController extends Controller
             'aplicaciones'        => 'array|exists:aplicacion,id',
             'nombre_usuario'      => 'array',
             'nombre_usuario.*'    => 'nullable|string|max:50',
+        ], [
+            'cuil.digits' => 'El CUIL debe tener exactamente 11 dígitos.',
         ]);
+
+        // Si cambia organización, debe quedar dentro del subárbol del admin
+        if ($auth->rol === 'admin' && $request->filled('organizacion_id')) {
+            if (!app('org')->inSameTree($auth->organizacion_id, (int)$request->organizacion_id)) {
+                return back()->withInput()->with('error', 'Organización destino fuera de tu alcance.');
+            }
+        }
 
         $contact->nombre              = $request->nombre;
         $contact->apellido            = $request->apellido;
@@ -195,7 +261,20 @@ class ContactController extends Controller
     // Eliminar
     public function destroy($dni)
     {
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $contact = Contact::findOrFail($dni);
+
+        // Admin sólo puede eliminar contactos de su subárbol
+        if ($auth->rol === 'admin') {
+            if (!$contact->organizacion_id || !app('org')->inSameTree($auth->organizacion_id, (int)$contact->organizacion_id)) {
+                return redirect()->route('contacts.index')->with('error', 'Contacto fuera de tu alcance.');
+            }
+        }
+
         $contact->delete();
         return redirect()->route('contacts.index')->with('success', 'Contacto eliminado exitosamente.');
     }

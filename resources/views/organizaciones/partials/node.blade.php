@@ -1,49 +1,53 @@
 @php
-    /**
-     * Variables recibidas:
-     * - $node    : objeto Organizacion con ->id, ->nombre, ->tipo, ->children
-     * - $openIds : array<int> con IDs a “abrir” automáticamente (búsqueda)
-     * - $search  : string de búsqueda (para resaltar)
-     */
-
-    // Resaltado del término buscado en el nombre
-    $label = $node->nombre ?? '';
-    if (!empty($search)) {
-        $pattern = '/' . preg_quote($search, '/') . '/i';
-        // Escapamos primero y luego inyectamos el mark
-        $label = preg_replace($pattern, '<mark>$0</mark>', e($label));
-    } else {
-        $label = e($label);
-    }
-
-    $isOpen = !empty($openIds) && in_array($node->id, $openIds);
+    // Este partial espera: $node (nodo actual) y $openIds (array de IDs abiertos cuando hay búsqueda)
+    $hasChildren = isset($node->children) && count($node->children) > 0;
+    $isOpen = in_array($node->id, $openIds ?? []);
+    $collapseId = "org-node-{$node->id}";
 @endphp
 
-<details @if($openIds && in_array($node->id,$openIds)) open @endif>
-  <summary class="org-line">
-    <span class="org-name fw-semibold text-dark">{{ $node->nombre }}</span>
+<li class="mb-2">
+    <div class="card bg-dark text-light border-secondary">
+        <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="pe-2">
+                    @if ($hasChildren)
+                        <a class="text-decoration-none text-light"
+                           data-bs-toggle="collapse"
+                           href="#{{ $collapseId }}"
+                           role="button"
+                           aria-expanded="{{ $isOpen ? 'true' : 'false' }}"
+                           aria-controls="{{ $collapseId }}">
+                            {{-- Indicador simple (sin CSS extra): ▶ / ▼ --}}
+                            <span class="me-2">{{ $isOpen ? '▼' : '▶' }}</span>
+                            <span class="fw-semibold" title="{{ $node->nombre }}">{{ $node->nombre }}</span>
+                        </a>
+                    @else
+                        <span class="fw-semibold" title="{{ $node->nombre }}">{{ $node->nombre }}</span>
+                    @endif
 
-    @if(!empty($node->tipo))
-      <small class="badge rounded-pill org-chip">{{ ucfirst($node->tipo) }}</small>
+                    <div class="text-muted small">
+                        {{ $node->tipo ?? '—' }}
+                    </div>
+                </div>
+
+                {{-- badge opcional con cantidad de hijos --}}
+                @if ($hasChildren)
+                    <span class="badge text-bg-secondary">{{ count($node->children) }} hijo{{ count($node->children)>1 ? 's' : '' }}</span>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    @if ($hasChildren)
+        <div class="collapse {{ $isOpen ? 'show' : '' }} ms-3 border-start border-secondary ps-3 mt-1" id="{{ $collapseId }}">
+            <ul class="list-unstyled mb-0">
+                @foreach ($node->children as $child)
+                    @include('organizaciones.partials.node', [
+                        'node' => $child,
+                        'openIds' => $openIds ?? []
+                    ])
+                @endforeach
+            </ul>
+        </div>
     @endif
-
-    {{-- ejemplo de etiqueta extra si la tienes --}}
-    @if(!empty($node->alias))
-      <small class="badge rounded-pill org-chip">{{ $node->alias }}</small>
-    @endif
-  </summary>
-
-  @if(!empty($node->children))
-    <ul class="org-list">
-      @foreach($node->children as $child)
-        <li>
-          @include('organizaciones.partials.node', [
-            'node'   => $child,
-            'openIds'=> $openIds,
-            'search' => $search
-          ])
-        </li>
-      @endforeach
-    </ul>
-  @endif
-</details>
+</li>
