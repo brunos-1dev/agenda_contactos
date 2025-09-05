@@ -6,6 +6,10 @@
 <div class="container">
     <h2 class="mb-4 text-center text-white">Listado del Personal</h2>
 
+    @php
+        $canManage = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
+    @endphp
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         {{-- BUSCADOR --}}
         <form action="{{ route('contacts.index') }}" method="GET" class="d-flex mb-3 justify-content-between align-items-center">
@@ -37,50 +41,39 @@
             </div>
 
             <a href="{{ route('contacts.export', ['search' => request('search')]) }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
-            <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">Nuevo Contacto</a>
+
+            @if($canManage)
+                <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">Nuevo Contacto</a>
+            @endif
         </div>
     </div>
 
-    {{-- ===== VISTA FICHAS (horizontal, compacta y clickeable) ===== --}}
+    {{-- ===== VISTA FICHAS ===== --}}
     @if ($view === 'cards')
         <div class="row row-cols-1 row-cols-lg-3 g-4">
             @foreach ($contacts as $contact)
                 <div class="col">
                     <article class="people-h-card d-flex position-relative">
-                        {{-- 1/3 Foto --}}
                         <div class="people-h-left">
                             <img src="{{ asset('images/persona4.png') }}"
                                  alt="Foto de {{ $contact->nombre }} {{ $contact->apellido }}"
                                  class="people-h-photo">
                         </div>
-
-                        {{-- 2/3 Datos --}}
                         <div class="people-h-right d-flex flex-column">
-                            {{-- Apellido grande + nombre más chico y cercano --}}
-                            <h4 class="people-surname text-uppercase mb-0">
-                                {{ $contact->apellido }}
-                            </h4>
-                            <div class="people-name text-uppercase">
-                                {{ $contact->nombre }}
-                            </div>
-
-                            {{-- DNI y NI en la misma línea --}}
+                            <h4 class="people-surname text-uppercase mb-0">{{ $contact->apellido }}</h4>
+                            <div class="people-name text-uppercase">{{ $contact->nombre }}</div>
                             <div class="people-meta">
                                 <span><strong>DNI:</strong> {{ $contact->dni }}</span>
                                 <br>
                                 <span><strong>NI:</strong> {{ $contact->ni }}</span>
                             </div>
                             <br>
-
-                            {{-- Organización como chip (1 línea, truncado si es largo) --}}
                             <div class="mt-1">
                                 <span class="people-dept-chip"
                                       title="{{ $contact->organizacion->nombre ?? 'Sin asignar' }}">
                                     {{ $contact->organizacion->nombre ?? 'Sin asignar' }}
                                 </span>
                             </div>
-
-                            {{-- Link invisible para que toda la ficha sea clickeable (abre "Ver") --}}
                             <a href="{{ route('contacts.show', $contact->dni) }}" class="stretched-link"></a>
                         </div>
                     </article>
@@ -111,9 +104,11 @@
                         <td>{{ $contact->organizacion->nombre ?? 'Sin asignar' }}</td>
                         <td>
                             <a href="{{ route('contacts.show', $contact->dni) }}" class="btn btn-outline-info btn-sm me-1">Ver</a>
-                            @if (auth()->user()->rol === 'admin')
+
+                            @if ($canManage)
                                 <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
-                                <form action="{{ route('contacts.destroy', $contact->dni) }}" method="POST" style="display:inline;">
+
+                                <form action="{{ route('contacts.destroy', $contact->dni) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm"
