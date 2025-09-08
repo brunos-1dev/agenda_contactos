@@ -57,15 +57,14 @@
         @else
             <ul class="org-root list-unstyled m-0">
                 @foreach ($tree as $root)
-                    <li class="mb-1">
-                        @include('organizaciones.partials.node', [
-                            'node'     => $root,
-                            'openIds'  => $openIds ?? [],
-                            'search'   => $search ?? '',
-                        ])
-                    </li>
+                    @include('organizaciones.partials.node', [
+                        'node'     => $root,
+                        'openIds'  => $openIds ?? [],
+                        'search'   => $search ?? '',
+                    ])
                 @endforeach
             </ul>
+
         @endif
     </div>
 </div>

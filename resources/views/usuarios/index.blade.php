@@ -38,7 +38,7 @@
                 <a href="{{ route('usuarios.export', ['search' => request('search')]) }}" class="btn btn-outline-success">
                     Exportar a Excel
                 </a>
-                <a href="{{ route('usuarios.create') }}" class="btn btn-primary">
+                <a href="{{ route('usuarios.create') }}" class="btn btn-outline-light px-4">
                     Nuevo Usuario
                 </a>
             @endif

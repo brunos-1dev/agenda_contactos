@@ -83,45 +83,47 @@
 
     {{-- ===== VISTA LISTA ===== --}}
     @else
-        <table class="table table-dark table-hover text-center align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>DNI</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>NI</th>
-                    <th>Organización</th>
-                    <th style="width: 260px;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($contacts as $contact)
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead class="table-secondary text-dark">
                     <tr>
-                        <td>{{ $contact->dni }}</td>
-                        <td>{{ $contact->nombre }}</td>
-                        <td>{{ $contact->apellido }}</td>
-                        <td>{{ $contact->ni }}</td>
-                        <td>{{ $contact->organizacion->nombre ?? 'Sin asignar' }}</td>
-                        <td>
-                            <a href="{{ route('contacts.show', $contact->dni) }}" class="btn btn-outline-info btn-sm me-1">Ver</a>
-
-                            @if ($canManage)
-                                <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
-
-                                <form action="{{ route('contacts.destroy', $contact->dni) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm"
-                                            onclick="return confirm('¿Seguro que desea eliminar?')">
-                                        Eliminar
-                                    </button>
-                                </form>
-                            @endif
-                        </td>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>NI</th>
+                        <th>Organización</th>
+                        <th style="width: 260px;">Acciones</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($contacts as $contact)
+                        <tr>
+                            <td>{{ $contact->dni }}</td>
+                            <td>{{ $contact->nombre }}</td>
+                            <td>{{ $contact->apellido }}</td>
+                            <td>{{ $contact->ni }}</td>
+                            <td>{{ $contact->organizacion->nombre ?? 'Sin asignar' }}</td>
+                            <td>
+                                <a href="{{ route('contacts.show', $contact->dni) }}" class="btn btn-outline-info btn-sm me-1">Ver</a>
+
+                                @if ($canManage)
+                                    <a href="{{ route('contacts.edit', $contact->dni) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
+
+                                    <form action="{{ route('contacts.destroy', $contact->dni) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                onclick="return confirm('¿Seguro que desea eliminar?')">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @endif
 </div>
 @endsection
