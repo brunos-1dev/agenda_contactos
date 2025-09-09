@@ -39,6 +39,23 @@ Route::get('/contacts/export', [ContactController::class, 'export'])
 Route::get('/usuarios/export', [UserController::class, 'export'])
     ->name('usuarios.export');
 
+
+// ==============================
+//   IMPORTACIÓN DE PERSONAS
+//   (colocar antes del resource)
+// ==============================
+Route::get('/contacts/import',  [ContactController::class, 'importForm'])
+    ->name('contacts.import.form')
+    ->middleware('auth');
+
+Route::post('/contacts/import', [ContactController::class, 'importProcess'])
+    ->name('contacts.import.process')
+    ->middleware('auth');
+
+Route::get('/contacts/import/template', [ContactController::class, 'importTemplate'])
+    ->name('contacts.import.template')
+    ->middleware('auth');
+
 // --- CRUDs restantes ---
 Route::resource('contacts', ContactController::class);
 Route::resource('departamentos', DepartamentoController::class);
