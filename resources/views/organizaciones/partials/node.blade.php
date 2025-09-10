@@ -1,36 +1,49 @@
 @php
-    // Espera: $node y $openIds
-    $hasChildren = isset($node->children) && count($node->children) > 0;
-    $isOpen = in_array($node->id, $openIds ?? []);
+    /**
+     * Variables recibidas:
+     * - $node    : objeto Organizacion con ->id, ->nombre, ->tipo, ->children
+     * - $openIds : array<int> con IDs a “abrir” automáticamente (búsqueda)
+     * - $search  : string de búsqueda (para resaltar)
+     */
+
+    // Resaltado del término buscado en el nombre
+    $label = $node->nombre ?? '';
+    if (!empty($search)) {
+        $pattern = '/' . preg_quote($search, '/') . '/i';
+        // Escapamos primero y luego inyectamos el mark
+        $label = preg_replace($pattern, '<mark>$0</mark>', e($label));
+    } else {
+        $label = e($label);
+    }
+
+    $isOpen = !empty($openIds) && in_array($node->id, $openIds);
 @endphp
 
-<li class="mb-2">
-    <details class="org-node" {{ $isOpen ? 'open' : '' }}>
-        <summary class="org-card d-flex justify-content-between align-items-start">
-            <div class="d-flex align-items-start">
-                @if($hasChildren)
-                    <span class="org-caret me-2"></span>
-                @else
-                    <span class="org-caret me-2 opacity-0"></span>
-                @endif
-                <span class="fw-semibold" title="{{ $node->nombre }}">{{ $node->nombre }}</span>
-            </div>
-            @if($hasChildren)
-                <span class="badge text-bg-secondary">{{ count($node->children) }} hijo{{ count($node->children)>1 ? 's' : '' }}</span>
-            @endif
-        </summary>
+<details @if($openIds && in_array($node->id,$openIds)) open @endif>
+  <summary class="org-line">
+    <span class="org-name fw-semibold text-dark">{{ $node->nombre }}</span>
 
-        @if ($hasChildren)
-            <div class="org-children ms-3 ps-3 mt-1 border-start border-secondary">
-                <ul class="list-unstyled mb-0">
-                    @foreach ($node->children as $child)
-                        @include('organizaciones.partials.node', [
-                            'node' => $child,
-                            'openIds' => $openIds ?? []
-                        ])
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-    </details>
-</li>
+    @if(!empty($node->tipo))
+      <small class="badge rounded-pill org-chip">{{ ucfirst($node->tipo) }}</small>
+    @endif
+
+    {{-- ejemplo de etiqueta extra si la tienes --}}
+    @if(!empty($node->alias))
+      <small class="badge rounded-pill org-chip">{{ $node->alias }}</small>
+    @endif
+  </summary>
+
+  @if(!empty($node->children))
+    <ul class="org-list">
+      @foreach($node->children as $child)
+        <li>
+          @include('organizaciones.partials.node', [
+            'node'   => $child,
+            'openIds'=> $openIds,
+            'search' => $search
+          ])
+        </li>
+      @endforeach
+    </ul>
+  @endif
+</details>

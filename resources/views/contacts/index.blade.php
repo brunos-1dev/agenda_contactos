@@ -40,10 +40,19 @@
                 </a>
             </div>
 
-            <a href="{{ route('contacts.export', ['search' => request('search')]) }}" class="btn btn-outline-success px-4">Exportar a Excel</a>
+            <a href="{{ route('contacts.export', ['search' => request('search')]) }}" class="btn btn-outline-success px-4">
+                Exportar a Excel
+            </a>
 
             @if($canManage)
-                <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">Nuevo Contacto</a>
+                {{-- >>> NUEVO BOTÓN, SIN CAMBIAR ESTILO <<< --}}
+                <a href="{{ route('contacts.import.form') }}" class="btn btn-outline-info px-4">
+                    Importar
+                </a>
+
+                <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">
+                    Nuevo Contacto
+                </a>
             @endif
         </div>
     </div>

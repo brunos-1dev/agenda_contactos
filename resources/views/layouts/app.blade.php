@@ -82,7 +82,10 @@
             </div>
         @endif
 
-        @yield('content')
+        <main class="@yield('pagePadding', 'pb-5 mb-5')">
+            @yield('content')
+        </main>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
