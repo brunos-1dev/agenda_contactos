@@ -8,7 +8,7 @@ body {
     color: #f8f9fa;
     min-height: 100vh;
     margin: 0;
-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* === NAVBAR CUSTOM === */
@@ -17,12 +17,10 @@ text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     padding-top: 0;
     padding-bottom: 0;
-
 }
 
 .navbar-nav .nav-link {
     color: #ffffff !important;
-
 }
 
 .navbar-nav .nav-link:hover {
@@ -107,7 +105,6 @@ h4 {
     color: #ccc;
 }
 
-
 .btn-outline-gray:hover {
     background-color: #ffffff;
     color: #1e3a8a;
@@ -119,9 +116,9 @@ h4 {
     border-color: #ffffff;
     background-color: transparent;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-    }
+}
 
-    .btn-outline-light:hover {
+.btn-outline-light:hover {
     background-color: transparent;
     color: #00bfff;
     border-color: #00bfff;
@@ -131,12 +128,12 @@ h4 {
 /* ====== Personas - Card horizontal (1/3 foto, 2/3 datos) ====== */
 .people-h-card {
   border-radius: 16px;
-  overflow: hidden;                 /* respeta bien el borde en toda la pieza */
+  overflow: hidden;
   background: #fff;
   border: 1px solid rgba(0,0,0,.08);
-  box-shadow: none;                 /* sin sombra por defecto */
-  min-height: 170px;                /* base */
-  color: #111;                      /* texto negro en toda la card */
+  box-shadow: none;
+  min-height: 170px;
+  color: #111;
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
@@ -164,15 +161,13 @@ h4 {
 }
 
 /* Columna de foto */
-.people-h-left{
-  background:#f6f7fb;
-}
+.people-h-left{ background:#f6f7fb; }
 
 /* Imagen */
 .people-h-photo{
   display:block;
   width:100%;
-  height:140px;         /* mobile/stack */
+  height:140px;
   object-fit:cover;
   object-position:center;
 }
@@ -189,7 +184,7 @@ h4 {
   font-weight:900;
   letter-spacing:.4px;
   font-size:1.25rem;
- text-shadow: none;
+  text-shadow: none;
 }
 
 .people-name{
@@ -225,16 +220,16 @@ h4 {
   margin-top:6px;
   color:#111!important;
   font-size:.92rem;
-    text-shadow: none;
+  text-shadow: none;
 }
 
 /* —— Alto fijo y 1/3–2/3 sólo en escritorio —— */
 @media (min-width: 768px){
-  .people-h-card{ height:150px; }     /* MÁS BAJA */
-  .people-h-left{ flex:0 0 150px; }   /* 1/3 aprox */
+  .people-h-card{ height:150px; }
+  .people-h-left{ flex:0 0 150px; }
   .people-h-photo{
     height:100%;
-    min-height:150px;                 /* ocupa toda la columna */
+    min-height:150px;
   }
   .people-h-right{ padding:12px 16px; }
 }
@@ -255,6 +250,7 @@ h4 {
   padding-left: 1rem;
 }
 
+/* ===== Variables base ===== */
 :root{
   --bg: #1e3a8a;      /* fondo general del sitio */
   --panel-1: #223452; /* panel oscuro */
@@ -262,98 +258,155 @@ h4 {
   --border: #3b4a6b;  /* bordes suaves */
 }
 
-/* Fondo y tipografía */
-.login-bg{
-  background-color: var(--bg) !important;
-  color:#fff;
-  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-}
+/* =========================================================
+   LOGIN (bloque único, sin duplicados)
+   ========================================================= */
 
-/* Encabezado (logos + título) */
+/* Fondo del login */
+.login-page { background-color: var(--bg); }
+
+/* Encabezado arriba (Identia + título) */
 .brand-wrap{
-  position: absolute;
-  top: 2.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
+  position:absolute;
+  top:18px; left:50%; transform:translateX(-50%);
+  text-align:center;
 }
 .brand-row{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.25rem;
+  display:flex; justify-content:center; align-items:center; gap:1.25rem;
 }
-.brand-ssa{ height: 90px; }
-.brand-tics{ height: 60px; }
+.brand-identia{ height:300px; } /* logo superior más grande */
 .brand-title{
-  margin-top: .75rem;
-  font-weight: 700;
-  letter-spacing: .3px;
+  margin-top:5px;
+  font-weight:1000;
+  letter-spacing:.04em;
+  font-size: clamp(1.25rem, 1.6vw + 1rem, 2rem);
 }
 
-/* Área central con respiro inferior */
+/* Área central y “aire” superior */
 .page-wrap{
-  min-height: 100vh;
-  padding-block: 7vh; /* agrega espacio arriba y abajo */
+  min-height:100vh;
+  padding-top:230px;               /* respira bajo el logo/título */
+  display:flex; flex-direction:column; align-items:center; gap:22px;
 }
 
-/* Tarjeta de login */
+/* Tarjeta del login */
 .login-card{
   background: linear-gradient(180deg, rgba(34,52,82,.96), rgba(22,38,66,.96));
   border: 1px solid rgba(255,255,255,.06);
   border-radius: 1rem;
   box-shadow: 0 12px 30px rgba(0,0,0,.28);
-  width: min(420px, 92vw);
+  width: min(460px, 92vw);
 }
 
-/* Inputs en estilo oscuro coherente con la app */
+/* Inputs oscuros coherentes */
 .login-control{
-  background: #0f1b33;
-  border: 1px solid var(--border);
-  color: #fff;
+  background:#0f1b33; border:1px solid var(--border); color:#fff;
 }
-
-.login-control::placeholder{
-  color: rgba(255,255,255,.55);
-}
+.login-control::placeholder{ color: rgba(255,255,255,.55); }
 .login-control:focus{
-  color:#fff;
-  background:#0f1b33;
-  border-color:#0dcaf0;              /* celeste Bootstrap */
+  color:#fff; background:#0f1b33; border-color:#0dcaf0;
   box-shadow:0 0 0 .2rem rgba(13,202,240,.15);
 }
 
-/* Etiquetas flotantes más legibles sobre fondo oscuro */
-.form-floating > label{
-  color: rgba(255,255,255,.65);
+/* Etiquetas flotantes sobre fondo oscuro */
+.form-floating > label{ color: rgba(255,255,255,.65); }
+
+/* Logos inferiores (TICS/SSA) */
+.brand-bottom{
+  display:flex; align-items:center; justify-content:center; gap:50px;
+  margin-top: 6x;
+}
+.brand-bottom img{
+  height:150px;                     /* logos inferiores más grandes */
+  opacity:.95; display:block;
 }
 
-/* === Alertas tematizadas (login) === */
+/* Alertas del login (si se usan) */
 #login .alert {
   border-radius: 12px;
   padding: 0.9rem 1rem;
   margin-bottom: 1rem;
   backdrop-filter: blur(2px);
 }
-
-/* Error en tono celeste de la marca */
 #login .alert-danger {
-  background: rgba(34, 211, 238, 0.12);   /* celeste sutil translúcido */
+  background: rgba(34, 211, 238, 0.12);
   border: 1px solid rgba(34, 211, 238, 0.38);
-  color: #d7f7ff;                          /* texto claro */
+  color: #d7f7ff;
 }
-
-/* Éxito (por si lo usás en el login) */
 #login .alert-success {
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.38);
   color: #d7fff2;
 }
+#login .alert .btn-close { filter: invert(1) opacity(.8); }
+#login .alert .btn-close:hover { opacity: 1; }
 
-/* Hacer visible la X sobre fondo oscuro */
-#login .alert .btn-close {
-  filter: invert(1) opacity(.8);
+/* Responsivo leve para móviles chicos */
+@media (max-width: 480px){
+  .brand-identia{ height: 120px; }
+  .page-wrap{ padding-top: 200px; gap: 18px; }
+  .brand-bottom img{ height: 46px; }
 }
-#login .alert .btn-close:hover {
-  opacity: 1;
+/* ===== LOGIN – look modern glass + CTA ===== */
+
+/* Card con glass suave */
+.login-card{
+  background: linear-gradient(180deg, rgba(20,33,63,.66), rgba(13,22,46,.66));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.35);
+  width: min(480px, 92vw); /* un pelín más ancho */
 }
+
+/* Título con presencia */
+.login-title{
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #e9f2ff;
+  margin-bottom: 1.25rem !important;
+}
+
+/* Inputs oscuros refinados */
+.login-control{
+  background: rgba(6,15,33,.88);
+  border: 1px solid rgba(255,255,255,.10);
+  color: #f5faff;
+  border-radius: 12px;
+}
+.login-control::placeholder{ color: rgba(255,255,255,.55); }
+.login-control:focus{
+  border-color:#22d3ee;
+  box-shadow: 0 0 0 .25rem rgba(34,211,238,.18);
+  color:#fff;
+}
+
+/* Separación pareja entre campos */
+.login-card .form-floating{ margin-bottom: 1.05rem; }
+
+/* Botón CTA Identia (gradiente, animado, sin afectar otros botones) */
+.btn-identia{
+  display:inline-flex; align-items:center; justify-content:center;
+  height: 54px;
+  width: 100%;
+  border-radius:14px;
+  font-weight: 800;
+  letter-spacing:.04em;
+  border: 0;
+  color:#031a2e;
+  background-image: linear-gradient(90deg, #00D5FF, #24B1FF 55%, #009FFD);
+  box-shadow:
+    0 12px 24px rgba(0,157,255,.34),
+    inset 0 0 0 1px rgba(255,255,255,.15);
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn-identia:hover{
+  transform: translateY(-2px);
+  filter: saturate(1.08);
+  box-shadow: 0 16px 32px rgba(0,157,255,.44);
+}
+.btn-identia:active{ transform: translateY(0); box-shadow: 0 8px 18px rgba(0,157,255,.32); }
+.btn-identia:focus{ outline: none; box-shadow: 0 0 0 .25rem rgba(0,157,255,.25); }
+.btn-identia:disabled{ opacity:.6; box-shadow:none; }
