@@ -254,3 +254,106 @@ h4 {
   border-left: 2px dashed #cbd5e1;
   padding-left: 1rem;
 }
+
+:root{
+  --bg: #1e3a8a;      /* fondo general del sitio */
+  --panel-1: #223452; /* panel oscuro */
+  --panel-2: #162642; /* degradado */
+  --border: #3b4a6b;  /* bordes suaves */
+}
+
+/* Fondo y tipografía */
+.login-bg{
+  background-color: var(--bg) !important;
+  color:#fff;
+  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+/* Encabezado (logos + título) */
+.brand-wrap{
+  position: absolute;
+  top: 2.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.brand-row{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+}
+.brand-ssa{ height: 90px; }
+.brand-tics{ height: 60px; }
+.brand-title{
+  margin-top: .75rem;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+
+/* Área central con respiro inferior */
+.page-wrap{
+  min-height: 100vh;
+  padding-block: 7vh; /* agrega espacio arriba y abajo */
+}
+
+/* Tarjeta de login */
+.login-card{
+  background: linear-gradient(180deg, rgba(34,52,82,.96), rgba(22,38,66,.96));
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 1rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,.28);
+  width: min(420px, 92vw);
+}
+
+/* Inputs en estilo oscuro coherente con la app */
+.login-control{
+  background: #0f1b33;
+  border: 1px solid var(--border);
+  color: #fff;
+}
+
+.login-control::placeholder{
+  color: rgba(255,255,255,.55);
+}
+.login-control:focus{
+  color:#fff;
+  background:#0f1b33;
+  border-color:#0dcaf0;              /* celeste Bootstrap */
+  box-shadow:0 0 0 .2rem rgba(13,202,240,.15);
+}
+
+/* Etiquetas flotantes más legibles sobre fondo oscuro */
+.form-floating > label{
+  color: rgba(255,255,255,.65);
+}
+
+/* === Alertas tematizadas (login) === */
+#login .alert {
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(2px);
+}
+
+/* Error en tono celeste de la marca */
+#login .alert-danger {
+  background: rgba(34, 211, 238, 0.12);   /* celeste sutil translúcido */
+  border: 1px solid rgba(34, 211, 238, 0.38);
+  color: #d7f7ff;                          /* texto claro */
+}
+
+/* Éxito (por si lo usás en el login) */
+#login .alert-success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.38);
+  color: #d7fff2;
+}
+
+/* Hacer visible la X sobre fondo oscuro */
+#login .alert .btn-close {
+  filter: invert(1) opacity(.8);
+}
+#login .alert .btn-close:hover {
+  opacity: 1;
+}

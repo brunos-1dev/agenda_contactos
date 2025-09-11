@@ -11,7 +11,7 @@ use App\Rules\TipoHijoValido;
 
 class OrganizacionController extends Controller
 {
-    /** Árbol + búsqueda */
+    /** Árbol + búsqueda (sin restricciones para visualizar) */
     public function index(Request $request)
     {
         $search = trim((string) $request->get('search', ''));
@@ -81,6 +81,12 @@ class OrganizacionController extends Controller
     /** Formulario de alta */
     public function create()
     {
+        // ⛔ Consulta: solo lectura
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('organizaciones.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $organizaciones = Organizacion::orderBy('ruta')->get();
         $parents = $organizaciones->map(function ($o) {
             $o->label = str_repeat('— ', (int) $o->nivel) . $o->nombre;
@@ -95,6 +101,12 @@ class OrganizacionController extends Controller
     /** Guarda el alta */
     public function store(Request $request)
     {
+        // ⛔ Consulta: solo lectura
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('organizaciones.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $tipos = Organizacion::TIPOS;
 
         $validated = $request->validate([
@@ -103,6 +115,20 @@ class OrganizacionController extends Controller
             'id_padre' => ['nullable', 'integer', 'exists:organizaciones,id'],
             'activo'   => ['sometimes', 'boolean'],
         ]);
+
+        // 🔒 Admin: sólo puede crear dentro de su subárbol y no puede crear raíz
+        if ($auth->rol === 'admin') {
+            if (!$auth->organizacion_id) {
+                return back()->withInput()->with('error', 'No tenés organización asignada.');
+            }
+            $padreId = $validated['id_padre'] ?? null;
+            if (!$padreId) {
+                return back()->withInput()->with('error', 'No podés crear una organización en la raíz.');
+            }
+            if (!app('org')->inSameTree($auth->organizacion_id, (int)$padreId)) {
+                return back()->withInput()->with('error', 'Sólo podés crear dentro de tu organización o sus descendientes.');
+            }
+        }
 
         $padre = null;
         $nivel = 0;
@@ -137,7 +163,20 @@ class OrganizacionController extends Controller
     /** Formulario de edición */
     public function edit($id)
     {
+        // ⛔ Consulta: solo lectura
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('organizaciones.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $org = Organizacion::findOrFail($id);
+
+        // 🔒 Admin: sólo puede editar dentro de su subárbol
+        if ($auth->rol === 'admin') {
+            if (!$auth->organizacion_id || !app('org')->inSameTree($auth->organizacion_id, (int)$org->id)) {
+                return redirect()->route('organizaciones.index')->with('error', 'Organización fuera de tu alcance.');
+            }
+        }
 
         $organizaciones = Organizacion::orderBy('ruta')->get();
         // Evitar poder elegirte a vos mismo como padre
@@ -160,8 +199,21 @@ class OrganizacionController extends Controller
     /** Actualiza la organización */
     public function update(Request $request, $id)
     {
+        // ⛔ Consulta: solo lectura
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('organizaciones.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $org   = Organizacion::findOrFail($id);
         $tipos = Organizacion::TIPOS;
+
+        // 🔒 Admin: el nodo a modificar debe estar dentro de su subárbol
+        if ($auth->rol === 'admin') {
+            if (!$auth->organizacion_id || !app('org')->inSameTree($auth->organizacion_id, (int)$org->id)) {
+                return redirect()->route('organizaciones.index')->with('error', 'Organización fuera de tu alcance.');
+            }
+        }
 
         $validated = $request->validate([
             'nombre'   => ['required', 'string', 'max:190'],
@@ -169,6 +221,18 @@ class OrganizacionController extends Controller
             'id_padre' => ['nullable', 'integer', 'exists:organizaciones,id', 'not_in:'.$id],
             'activo'   => ['sometimes', 'boolean'],
         ]);
+
+        // 🔒 Admin: si cambia el padre, el nuevo debe estar dentro de su subárbol y no puede ser raíz
+        if ($auth->rol === 'admin') {
+            $padreIdNuevo = $validated['id_padre'] ?? null;
+
+            if ($padreIdNuevo === null) {
+                return back()->withInput()->with('error', 'No podés mover esta organización a la raíz.');
+            }
+            if (!app('org')->inSameTree($auth->organizacion_id, (int)$padreIdNuevo)) {
+                return back()->withInput()->with('error', 'Padre destino fuera de tu alcance.');
+            }
+        }
 
         $padreIdNuevo = $validated['id_padre'] ?? null;
         $padreNuevo   = $padreIdNuevo ? Organizacion::find($padreIdNuevo) : null;
@@ -212,8 +276,8 @@ class OrganizacionController extends Controller
                 // reemplazar prefijo oldRuta por newRuta
                 if (str_starts_with($child->ruta, $oldRuta)) {
                     $child->ruta = $org->ruta . substr($child->ruta, strlen($oldRuta));
-                    // nivel del hijo = cantidad de / - 2 (pero mejor: padre + 1 del propio)
-                    $child->nivel = (substr_count($child->ruta, '/') - 1); // opcional: mantener consistencia
+                    // nivel consistente según cantidad de '/'
+                    $child->nivel = (substr_count($child->ruta, '/') - 1);
                     $child->save();
                 }
             }

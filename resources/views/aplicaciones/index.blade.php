@@ -35,34 +35,36 @@
         @endif
     </div>
 
-    <table class="table table-dark table-hover text-center align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Nombre</th>
-                <th style="width: 260px;">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($aplicaciones as $aplicacion)
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead class="table-secondary text-dark">
                 <tr>
-                    <td>{{ $aplicacion->nombre }}</td>
-                    <td>
-                        @if($canManage)
-                            <a href="{{ route('aplicaciones.edit', $aplicacion->id) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
-
-                            <form action="{{ route('aplicaciones.destroy', $aplicacion->id) }}" method="POST" class="d-inline"
-                                  onsubmit="return confirm('¿Estás seguro de eliminar esta aplicación?');">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-outline-danger btn-sm">Eliminar</button>
-                            </form>
-                        @else
-                            <span class="text-muted">—</span>
-                        @endif
-                    </td>
+                    <th>Nombre</th>
+                    <th style="width: 260px;">Acciones</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach($aplicaciones as $aplicacion)
+                    <tr>
+                        <td>{{ $aplicacion->nombre }}</td>
+                        <td>
+                            @if($canManage)
+                                <a href="{{ route('aplicaciones.edit', $aplicacion->id) }}" class="btn btn-outline-warning btn-sm me-1">Editar</a>
+
+                                <form action="{{ route('aplicaciones.destroy', $aplicacion->id) }}" method="POST" class="d-inline"
+                                    onsubmit="return confirm('¿Estás seguro de eliminar esta aplicación?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-outline-danger btn-sm">Eliminar</button>
+                                </form>
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection

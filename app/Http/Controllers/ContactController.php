@@ -16,11 +16,12 @@ use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
 class ContactController extends Controller
 {
+    // ===== Helper: opciones para el <select> de organizaciones (con sangría) =====
     private function orgOptions()
     {
         return Organizacion::orderBy('ruta')->orderBy('orden')->get()
             ->map(function ($o) {
-                $o->label = str_repeat('— ', max(0, (int)$o->nivel)).$o->nombre;
+                $o->label = str_repeat('— ', max(0, (int)$o->nivel)) . $o->nombre;
                 return $o;
             });
     }
@@ -28,12 +29,14 @@ class ContactController extends Controller
     public function show($dni)
     {
         $contact = Contact::findOrFail($dni);
-        $departamentos = Departamento::all();
+        $departamentos = Departamento::all(); // legacy, si aún lo usas en la vista
         return view('contacts.show', compact('contact', 'departamentos'));
     }
 
     public function index(Request $request)
     {
+        $auth = auth()->user();
+
         $query = Contact::query();
 
         // ===== filtro por organización según rol =====
@@ -54,6 +57,7 @@ class ContactController extends Controller
             $query->whereRaw('1=0');
         }
 
+        // Búsqueda opcional
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(function ($q) use ($s) {
@@ -63,12 +67,27 @@ class ContactController extends Controller
             });
         }
 
+        // Alcance por organización
+        if (in_array($auth->rol, ['admin','consulta'])) {
+            if ($auth->organizacion_id) {
+                $ids = app('org')->subtreeIds($auth->organizacion_id);
+                $query->whereIn('organizacion_id', $ids);
+            } else {
+                $query->whereRaw('1=0'); // fail-safe
+            }
+        }
+
         $contacts = $query->get();
         return view('contacts.index', compact('contacts'));
     }
 
     public function create()
     {
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $aplicaciones = Aplicacion::all();
         $orgs = $this->orgOptions();
         return view('contacts.create', compact('aplicaciones', 'orgs'));
@@ -76,6 +95,11 @@ class ContactController extends Controller
 
     public function store(Request $request)
     {
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $jerarquias = [
             'Suboficial','Oficial','Subinspector','Inspector','Subcomisario',
             'Comisario','Comisario Supervisor','Subdirector','Director','Director General'
@@ -98,7 +122,16 @@ class ContactController extends Controller
             'aplicaciones'        => 'array|exists:aplicacion,id',
             'nombre_usuario'      => 'array',
             'nombre_usuario.*'    => 'nullable|string|max:50',
+        ], [
+            'cuil.digits' => 'El CUIL debe tener exactamente 11 dígitos.',
         ]);
+
+        // Admin sólo puede asignar organización dentro de su subárbol
+        if ($auth->rol === 'admin' && $request->filled('organizacion_id')) {
+            if (!app('org')->inSameTree($auth->organizacion_id, (int)$request->organizacion_id)) {
+                return back()->withInput()->with('error', 'Organización fuera de tu alcance.');
+            }
+        }
 
         $contact = new Contact();
         $contact->dni                 = $request->dni;
@@ -133,20 +166,32 @@ class ContactController extends Controller
         $aplicaciones  = Aplicacion::all();
         $aplicSel      = $contact->aplicaciones()->pluck('aplicacion.id')->toArray();
         $pivotData     = $contact->aplicaciones()->get()->keyBy('id');
-        $orgs          = $this->orgOptions();
+        $orgs          = $this->orgOptions();  // <<<< enviar $orgs a la vista
 
         return view('contacts.edit', [
             'contact'                   => $contact,
             'aplicaciones'              => $aplicaciones,
             'aplicacionesSeleccionadas' => $aplicSel,
             'pivotData'                 => $pivotData,
-            'orgs'                      => $orgs,
+            'orgs'                      => $orgs,   // <<<<
         ]);
     }
 
     public function update(Request $request, $dni)
     {
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $contact = Contact::findOrFail($dni);
+
+        // Admin sólo puede actualizar contactos de su subárbol
+        if ($auth->rol === 'admin') {
+            if (!$contact->organizacion_id || !app('org')->inSameTree($auth->organizacion_id, (int)$contact->organizacion_id)) {
+                return redirect()->route('contacts.index')->with('error', 'Contacto fuera de tu alcance.');
+            }
+        }
 
         $jerarquias = [
             'Suboficial','Oficial','Subinspector','Inspector','Subcomisario',
@@ -169,7 +214,16 @@ class ContactController extends Controller
             'aplicaciones'        => 'array|exists:aplicacion,id',
             'nombre_usuario'      => 'array',
             'nombre_usuario.*'    => 'nullable|string|max:50',
+        ], [
+            'cuil.digits' => 'El CUIL debe tener exactamente 11 dígitos.',
         ]);
+
+        // Si cambia organización, debe quedar dentro del subárbol del admin
+        if ($auth->rol === 'admin' && $request->filled('organizacion_id')) {
+            if (!app('org')->inSameTree($auth->organizacion_id, (int)$request->organizacion_id)) {
+                return back()->withInput()->with('error', 'Organización destino fuera de tu alcance.');
+            }
+        }
 
         $contact->nombre              = $request->nombre;
         $contact->apellido            = $request->apellido;
@@ -200,7 +254,20 @@ class ContactController extends Controller
 
     public function destroy($dni)
     {
+        $auth = auth()->user();
+        if ($auth->rol === 'consulta') {
+            return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
+        }
+
         $contact = Contact::findOrFail($dni);
+
+        // Admin sólo puede eliminar contactos de su subárbol
+        if ($auth->rol === 'admin') {
+            if (!$contact->organizacion_id || !app('org')->inSameTree($auth->organizacion_id, (int)$contact->organizacion_id)) {
+                return redirect()->route('contacts.index')->with('error', 'Contacto fuera de tu alcance.');
+            }
+        }
+
         $contact->delete();
         return redirect()->route('contacts.index')->with('success', 'Contacto eliminado exitosamente.');
     }
@@ -256,8 +323,8 @@ class ContactController extends Controller
 
         // Ejemplos
         $sheet->fromArray([
-            ['22222222','20-22222222-6','Matias','Prueba','mprueba@gmail.com','471236','911','Rosario','pruebaaaa','mprueba','456127','Suboficial', $orgNames[0] ?? '', 'SaeCad|OtraApp'],
-            ['33333333','20-33333333-4','Bruno','Soria','brunog.soria@gmail.com','3416000000','','Santa Fe','San Juan 1234','','','Oficial', $orgNames[1] ?? '', ''],
+            ['22222222','20-22222222-6','Matias','Garcia','mariasgarcia@gmail.com','471236','911','Rosario','San Juan 1234','mgarcia','456127','Suboficial', $orgNames[0] ?? '', 'SaeCad|OtraApp'],
+            
         ], null, 'A2');
 
         $sheet->freezePane('A2');
@@ -327,42 +394,67 @@ class ContactController extends Controller
         ]);
     }
 
-    public function importProcess(Request $request)
+        public function importProcess(Request $request)
     {
         $user = auth()->user();
         if (!$user || $user->rol === 'consulta') {
             return redirect()->route('contacts.index')->with('error', 'Tu rol es de solo lectura.');
         }
 
+        // El input del form debe llamarse "csv"
         $request->validate([
-            'csv' => 'required|file|mimes:xlsx,csv,txt',
+            'csv' => 'required|file|mimes:xlsx,xls,csv,txt',
         ]);
 
-        // Organizaciones permitidas por el usuario
+        // Organizaciones permitidas por el usuario (array: [nombre => id])
         if ($user->rol === 'superadmin') {
-            $allowedOrgs = Organizacion::pluck('id','nombre'); // nombre => id
+            $allowedOrgs = Organizacion::pluck('id','nombre');
         } else {
             $base = Organizacion::find($user->organizacion_id);
             if (!$base) return back()->with('error', 'No tenés organización asignada.');
-            $allowedOrgs = Organizacion::where('ruta','like',$base->ruta.'%')
-                ->pluck('id','nombre');
+            $allowedOrgs = Organizacion::where('ruta','like',$base->ruta.'%')->pluck('id','nombre');
+        }
+
+        // Normalizador: minúsculas, espacios simples y sin acentos
+        $normalize = function (?string $s): string {
+            $s = (string)$s;
+            $s = trim(preg_replace('/\s+/u', ' ', $s));
+            $s = mb_strtolower($s, 'UTF-8');
+            $s = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $s);
+            return $s ?? '';
+        };
+
+        // Mapa normalizado de organizaciones permitidas: [nombre_normalizado => id]
+        $allowedOrgsNorm = [];
+        foreach ($allowedOrgs as $name => $id) {
+            $allowedOrgsNorm[$normalize($name)] = $id;
         }
 
         // Abrir archivo
-        $file    = $request->file('csv')->getRealPath();
-        $reader  = IOFactory::createReaderForFile($file);
-        $reader->setReadDataOnly(true);
-        $spread  = $reader->load($file);
-        $sheet   = $spread->getSheetByName('Carga') ?: $spread->getActiveSheet();
-        $rows    = $sheet->toArray(null, true, true, true);
+        $file   = $request->file('csv')->getRealPath();
+        $reader = IOFactory::createReaderForFile($file);
 
-        // Mapear encabezados
+        // Si es CSV, arreglar encoding y delimitador (; o ,)
+        if ($reader instanceof \PhpOffice\PhpSpreadsheet\Reader\Csv) {
+            $head = @file_get_contents($file, false, null, 0, 4096) ?: '';
+            $hasBom = str_starts_with($head, "\xEF\xBB\xBF");
+            $reader->setInputEncoding($hasBom ? 'UTF-8' : 'Windows-1252');
+            $reader->setDelimiter(substr_count($head, ';') > substr_count($head, ',') ? ';' : ',');
+        }
+
+        $reader->setReadDataOnly(true);
+        $spread = $reader->load($file);
+        $sheet  = $spread->getSheetByName('Carga') ?: $spread->getActiveSheet();
+        $rows   = $sheet->toArray(null, true, true, true);
+
+        // Mapear encabezados (fila 1)
         $headerRow = $rows[1] ?? [];
         $map = [];
         foreach ($headerRow as $col => $name) {
             $map[ trim(strtolower($name)) ] = $col;
         }
 
+        // Columnas obligatorias
         $need = ['dni','nombre','apellido','organizacion'];
         foreach ($need as $n) {
             if (!isset($map[$n])) {
@@ -379,8 +471,19 @@ class ContactController extends Controller
                 $col = $map[$key] ?? null;
                 return $col ? trim((string)($row[$col] ?? '')) : '';
             };
+            // Lee el primero no vacío entre varias posibles columnas
+            $getAny = function(array $keys) use ($get) {
+                foreach ($keys as $k) {
+                    $v = $get($k);
+                    if ($v !== '') return $v;
+                }
+                return '';
+            };
 
-            $dni   = $get('dni');
+            // Normalizamos DNI por si viniera con puntos/espacios
+            $dniRaw = $get('dni');
+            $dni    = preg_replace('/\D+/', '', $dniRaw ?? '');
+
             $nom   = $get('nombre');
             $ape   = $get('apellido');
             $orgNm = $get('organizacion');
@@ -389,59 +492,96 @@ class ContactController extends Controller
                 $errors[] = ['fila'=>$i, 'error'=>'Faltan campos obligatorios: dni, nombre, apellido y organización.'];
                 continue;
             }
-
             if (!ctype_digit($dni)) {
-                $errors[] = ['fila'=>$i, 'error'=>"DNI inválido: $dni"];
+                $errors[] = ['fila'=>$i, 'error'=>"DNI inválido: $dniRaw"];
                 continue;
             }
 
-            $orgId = $allowedOrgs[$orgNm] ?? null;
+            $orgId = $allowedOrgsNorm[$normalize($orgNm)] ?? null;
             if (!$orgId) {
                 $errors[] = ['fila'=>$i, 'error'=>"Organización no permitida o inexistente: $orgNm"];
                 continue;
             }
 
-            // upsert por DNI
+            // === CUIL (opcional): normalizar/validar/unicidad ===
+            $cuilRaw = $get('cuil');
+            $cuil    = preg_replace('/\D+/', '', $cuilRaw ?? '');
+            if ($cuil !== '' && strlen($cuil) !== 11) {
+                $errors[] = ['fila'=>$i, 'error'=>"CUIL inválido: $cuilRaw (debe tener 11 dígitos)"];
+                $cuil = ''; // no lo guardamos si es inválido
+            }
+            if ($cuil !== '') {
+                $dupe = Contact::where('cuil', $cuil)
+                        ->where('dni', '!=', $dni)
+                        ->exists();
+                if ($dupe) {
+                    $errors[] = ['fila'=>$i, 'error'=>"CUIL $cuil ya está asignado a otro contacto."];
+                    $cuil = ''; // evitar violar la unique
+                }
+            }
+
+            // Campos opcionales
+            $email   = $get('email');
+            $tel     = $get('telefono');
+            $telEmer = $getAny(['telefono_emergencia','contacto_emergencia']); // acepta ambos encabezados
+            $loc     = $get('localidad');
+            $dom     = $get('domicilio');
+            $iup     = $get('iup');
+            $ni      = $get('ni');
+            $jera    = $get('jerarquia');
+
+            // (opcional) evitar IUP duplicado con otro DNI
+            if ($iup !== '') {
+                $dupIup = Contact::where('iup', $iup)->where('dni', '<>', $dni)->exists();
+                if ($dupIup) {
+                    $errors[] = ['fila'=>$i, 'error'=>"IUP duplicado: $iup"];
+                    $iup = '';
+                }
+            }
+
+            // Upsert por DNI
             $c = Contact::find($dni);
             if ($c) {
-                // no permitir mover de organización
+                // No permitir mover de organización
                 if ($c->organizacion_id && (int)$c->organizacion_id !== (int)$orgId) {
                     $errors[] = ['fila'=>$i, 'error'=>"El DNI $dni ya existe en otra organización y no puede moverse por importación."];
                     continue;
                 }
-                // actualizar solo si viene no vacío
-                $c->nombre   = $nom ?: $c->nombre;
-                $c->apellido = $ape ?: $c->apellido;
-                $c->email    = $get('email') ?: $c->email;
-                $c->telefono = $get('telefono') ?: $c->telefono;
-                $c->telefono_emergencia = $get('telefono_emergencia') ?: $c->telefono_emergencia;
-                $c->localidad = $get('localidad') ?: $c->localidad;
-                $c->domicilio = $get('domicilio') ?: $c->domicilio;
-                $c->iup       = $get('iup') ?: $c->iup;
-                $c->ni        = $get('ni') ?: $c->ni;
-                $c->jerarquia = $get('jerarquia') ?: $c->jerarquia;
+                // Actualizar solo si viene no vacío
+                $c->nombre               = $nom   ?: $c->nombre;
+                $c->apellido             = $ape   ?: $c->apellido;
+                if ($cuil !== '') $c->cuil = $cuil; // ← asignar CUIL en update
+                $c->email                = $email ?: $c->email;
+                $c->telefono             = $tel   ?: $c->telefono;
+                $c->contacto_emergencia  = $telEmer ?: $c->contacto_emergencia;
+                $c->localidad            = $loc   ?: $c->localidad;
+                $c->domicilio            = $dom   ?: $c->domicilio;
+                $c->iup                  = $iup   ?: $c->iup;
+                $c->ni                   = $ni    ?: $c->ni;
+                $c->jerarquia            = $jera  ?: $c->jerarquia;
                 if (!$c->organizacion_id) $c->organizacion_id = $orgId;
                 $c->save();
                 $updated++;
             } else {
                 $c = new Contact();
-                $c->dni        = $dni;
-                $c->nombre     = $nom;
-                $c->apellido   = $ape;
-                $c->email      = $get('email');
-                $c->telefono   = $get('telefono');
-                $c->telefono_emergencia = $get('telefono_emergencia');
-                $c->localidad  = $get('localidad');
-                $c->domicilio  = $get('domicilio');
-                $c->iup        = $get('iup');
-                $c->ni         = $get('ni');
-                $c->jerarquia  = $get('jerarquia');
-                $c->organizacion_id = $orgId;
+                $c->dni                 = $dni;
+                $c->nombre              = $nom;
+                $c->apellido            = $ape;
+                $c->cuil                = $cuil ?: null; // ← asignar CUIL en create
+                $c->email               = $email ?: null;
+                $c->telefono            = $tel ?: null;
+                $c->contacto_emergencia = $telEmer ?: null;
+                $c->localidad           = $loc ?: null;
+                $c->domicilio           = $dom ?: null;
+                $c->iup                 = $iup ?: null;
+                $c->ni                  = $ni ?: null;
+                $c->jerarquia           = $jera ?: null;
+                $c->organizacion_id     = $orgId;
                 $c->save();
                 $created++;
             }
 
-            // aplicaciones opcionales por nombre (SaeCad|OtraApp)
+            // Aplicaciones opcionales por nombre (SaeCad|OtraApp)
             $appsStr = $get('aplicaciones_nombres');
             if ($appsStr !== '') {
                 $names = array_filter(array_map('trim', explode('|', $appsStr)));
@@ -454,6 +594,21 @@ class ContactController extends Controller
             }
         }
 
-        return view('contacts.import_result', compact('created','updated','errors'));
-    }
+        // Normalizar a lo que espera la vista
+        $errorsRows = array_map(function ($e) {
+            return [
+                'row' => $e['fila']  ?? ($e['row'] ?? null),
+                'msg' => $e['error'] ?? ($e['msg'] ?? ''),
+            ];
+        }, $errors);
+
+        return view('contacts.import_result', [
+            'inserted'   => $created,
+            'updated'    => $updated,
+            'errorsRows' => $errorsRows,
+        ]);
+}
+
+
+
 }

@@ -1,53 +1,49 @@
 @php
-    // Espera: $node (objeto con ->id, ->nombre, ->tipo, ->children[]), y $openIds (array de IDs a abrir)
-    $hasChildren = isset($node->children) && count($node->children) > 0;
-    $isOpen = in_array($node->id, $openIds ?? []);
-    $collapseId = "org-node-{$node->id}";
+    /**
+     * Variables recibidas:
+     * - $node    : objeto Organizacion con ->id, ->nombre, ->tipo, ->children
+     * - $openIds : array<int> con IDs a “abrir” automáticamente (búsqueda)
+     * - $search  : string de búsqueda (para resaltar)
+     */
+
+    // Resaltado del término buscado en el nombre
+    $label = $node->nombre ?? '';
+    if (!empty($search)) {
+        $pattern = '/' . preg_quote($search, '/') . '/i';
+        // Escapamos primero y luego inyectamos el mark
+        $label = preg_replace($pattern, '<mark>$0</mark>', e($label));
+    } else {
+        $label = e($label);
+    }
+
+    $isOpen = !empty($openIds) && in_array($node->id, $openIds);
 @endphp
 
-<li class="mb-2">
-    <div class="org-card">
-        <div class="org-body">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="pe-2">
-                    @if ($hasChildren)
-                        <button
-                            class="org-toggle btn btn-link p-0 text-light text-decoration-none"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#{{ $collapseId }}"
-                            aria-expanded="{{ $isOpen ? 'true' : 'false' }}"
-                            aria-controls="{{ $collapseId }}"
-                        >
-                            <span class="org-caret"></span>
-                            <span class="org-title" title="{{ $node->nombre }}">{{ $node->nombre }}</span>
-                        </button>
-                    @else
-                        <span class="org-title" title="{{ $node->nombre }}">{{ $node->nombre }}</span>
-                    @endif
+<details @if($openIds && in_array($node->id,$openIds)) open @endif>
+  <summary class="org-line">
+    <span class="org-name fw-semibold text-dark">{{ $node->nombre }}</span>
 
-                    @if(!empty($node->tipo))
-                        <div class="org-sub">{{ $node->tipo }}</div>
-                    @endif
-                </div>
-
-                @if ($hasChildren)
-                    <span class="org-badge">{{ count($node->children) }} {{ count($node->children) === 1 ? 'hijo' : 'hijos' }}</span>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    @if ($hasChildren)
-        <div class="collapse org-children mt-1 {{ $isOpen ? 'show' : '' }}" id="{{ $collapseId }}">
-            <ul class="org-tree">
-                @foreach ($node->children as $child)
-                    @include('organizaciones.partials.node', [
-                        'node'    => $child,
-                        'openIds' => $openIds ?? [],
-                    ])
-                @endforeach
-            </ul>
-        </div>
+    @if(!empty($node->tipo))
+      <small class="badge rounded-pill org-chip">{{ ucfirst($node->tipo) }}</small>
     @endif
-</li>
+
+    {{-- ejemplo de etiqueta extra si la tienes --}}
+    @if(!empty($node->alias))
+      <small class="badge rounded-pill org-chip">{{ $node->alias }}</small>
+    @endif
+  </summary>
+
+  @if(!empty($node->children))
+    <ul class="org-list">
+      @foreach($node->children as $child)
+        <li>
+          @include('organizaciones.partials.node', [
+            'node'   => $child,
+            'openIds'=> $openIds,
+            'search' => $search
+          ])
+        </li>
+      @endforeach
+    </ul>
+  @endif
+</details>

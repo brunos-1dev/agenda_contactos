@@ -29,7 +29,7 @@
                 @csrf
                 <div>
                     <label class="form-label text-white">Archivo (.xlsx o .csv)</label>
-                    <input type="file" name="file" accept=".xlsx,.csv" class="form-control bg-dark text-white border-secondary" required>
+                    <input type="file" name="csv" accept=".xlsx,.csv" class="form-control bg-dark text-white border-secondary" required>
                     <div class="form-text text-white-50">
                         La primera fila debe ser el encabezado de columnas de la plantilla.
                     </div>

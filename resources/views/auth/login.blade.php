@@ -1,63 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Iniciar Sesión</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <style>
-        body {
-            background-color: #1e3a8a !important; /* azul del fondo igual que inicio */
-            color: #fff;
-        }
-        .login-card {
-            background-color: #2c3e50;
-            color: #fff;
-            border-radius: 12px;
-        }
-        .form-control {
-            background-color: #ecf0f1;
-            color: #000;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Iniciar Sesión</title>
+
+  {{-- Bootstrap --}}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  {{-- Estilos del sitio + estilos del login (separados) --}}
+  @vite(['resources/css/app.css','resources/css/login.css'])
 </head>
-<body class="d-flex justify-content-center align-items-center vh-100">
+<body class="login-page d-flex justify-content-center align-items-center vh-100">
 
-<div class="text-center position-absolute top-0 start-50 translate-middle-x mt-4">
-    <div class="d-flex justify-content-center align-items-center gap-4">
-        <img src="{{ asset('images/ssa_lea2.svg') }}" alt="Logo SSA" style="height: 120px;">
-        <img src="{{ asset('images/tics_lea2.svg') }}" alt="Logo TICS" style="height: 80px;">
+
+  {{-- Logos + título --}}
+  <div class="brand-wrap">
+    <div class="brand-row">
+      <img src="{{ asset('images/ssa_lea2.svg') }}" alt="Logo SSA" class="brand-ssa">
+      <img src="{{ asset('images/tics_lea2.svg') }}" alt="Logo TICS" class="brand-tics">
     </div>
-    <h2 class="mt-3">Sistema de Registro de Usuarios</h2>
-</div>
+    <h2 class="brand-title">Sistema de Registro de Usuarios</h2>
+  </div>
 
-<div class="card p-4 shadow login-card" style="min-width: 300px; max-width: 400px;">
-    <h4 class="mb-3 text-center">Iniciar Sesión</h4>
+  {{-- Contenedor principal --}}
+  <div class="page-wrap d-flex align-items-center justify-content-center">
+    <div class="card login-card p-4 p-md-5">
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            {{ $errors->first() }}
+      <h4 class="mb-3 text-center fw-bold">Iniciar Sesión</h4>
+
+      @if ($errors->any())
+        <div class="alert alert-danger py-2 mb-4">
+          {{ $errors->first() }}
         </div>
-    @endif
+      @endif
 
-    <form method="POST" action="{{ route('login') }}">
+      <form method="POST" action="{{ route('login') }}" class="mt-2">
         @csrf
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" name="email" id="email" class="form-control" required autofocus value="{{ old('email') }}">
+        <div class="form-floating mb-3">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            class="form-control login-control"
+            placeholder=""
+            required
+            autofocus
+            value="{{ old('email') }}"
+          >
+          <label for="email">Correo electrónico</label>
         </div>
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+        <div class="form-floating mb-4">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            class="form-control login-control"
+            placeholder=""
+            required
+          >
+          <label for="password">Contraseña</label>
         </div>
 
-        <div class="d-grid">
-            <button type="submit" class="btn btn-success">Ingresar</button>
-        </div>
-    </form>
-</div>
+        <button type="submit" class="btn btn-info btn-lg w-100 fw-semibold">
+          Ingresar
+        </button>
+      </form>
 
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
