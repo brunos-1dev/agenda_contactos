@@ -33,8 +33,8 @@
         @endif
     </div>
 
-    {{-- Contenedor del árbol --}}
-    <div class="bg-white rounded-4 p-3 shadow-sm">
+        {{-- Contenedor del árbol --}}
+    <div class="org-panel rounded-4 p-3 shadow-sm">
         @if(($tree ?? collect())->isEmpty())
             <div class="text-center text-muted py-4">
                 @if(!empty($search))
@@ -57,5 +57,6 @@
             </ul>
         @endif
     </div>
+
 </div>
 @endsection

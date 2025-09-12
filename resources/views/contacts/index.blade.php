@@ -10,25 +10,46 @@
         $canManage = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
     @endphp
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    {{-- Barra superior --}}
+    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+
         {{-- BUSCADOR --}}
-        <form action="{{ route('contacts.index') }}" method="GET" class="d-flex mb-3 justify-content-between align-items-center">
+        <form action="{{ route('contacts.index') }}" method="GET"
+              class="d-flex align-items-center">
             <div class="d-flex">
                 <input
                     type="text"
                     name="search"
                     class="form-control me-2 bg-dark text-white border-secondary placeholder-light"
-                    style="width: 350px;"
-                    placeholder="Buscar por DNI, nombre o apellido"
+                    style="width: 420px;"
+                    placeholder="Buscar por DNI, nombre, apellido u organización"
                     value="{{ request('search') }}"
                 >
                 <button type="submit" class="btn btn-outline-light px-4">Buscar</button>
             </div>
         </form>
 
+        {{-- Botones de acción (quedan antes del toggle) --}}
         <div class="d-flex align-items-center gap-2">
-            {{-- TOGGLE VISTA --}}
-            @php($view = request('view', 'cards'))
+            <a href="{{ route('contacts.export', ['search' => request('search')]) }}"
+               class="btn btn-outline-success px-4">
+                Exportar a Excel
+            </a>
+
+            @if($canManage)
+                <a href="{{ route('contacts.import.form') }}" class="btn btn-outline-info px-4">
+                    Importar
+                </a>
+
+                <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">
+                    Nuevo Contacto
+                </a>
+            @endif
+        </div>
+
+        {{-- TOGGLE VISTA (separado y a la derecha) --}}
+        @php($view = request('view', 'cards'))
+        <div class="ms-auto">
             <div class="btn-group btn-group-sm" role="group" aria-label="Cambiar vista">
                 <a href="{{ request()->fullUrlWithQuery(['view' => 'cards']) }}"
                    class="btn btn-outline-light {{ $view === 'cards' ? 'active' : '' }}">
@@ -39,21 +60,6 @@
                     Listado
                 </a>
             </div>
-
-            <a href="{{ route('contacts.export', ['search' => request('search')]) }}" class="btn btn-outline-success px-4">
-                Exportar a Excel
-            </a>
-
-            @if($canManage)
-                {{-- >>> NUEVO BOTÓN, SIN CAMBIAR ESTILO <<< --}}
-                <a href="{{ route('contacts.import.form') }}" class="btn btn-outline-info px-4">
-                    Importar
-                </a>
-
-                <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">
-                    Nuevo Contacto
-                </a>
-            @endif
         </div>
     </div>
 

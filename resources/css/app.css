@@ -410,3 +410,70 @@ h4 {
 .btn-identia:active{ transform: translateY(0); box-shadow: 0 8px 18px rgba(0,157,255,.32); }
 .btn-identia:focus{ outline: none; box-shadow: 0 0 0 .25rem rgba(0,157,255,.25); }
 .btn-identia:disabled{ opacity:.6; box-shadow:none; }
+
+/* Panel oscuro para el árbol de organizaciones */
+.org-panel{
+  background: #0f1b33;              /* o usa var(--panel-1) si preferís: background: var(--panel-1); */
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+/* Textos “muted” dentro del panel, que sean legibles en oscuro */
+.org-panel .text-muted{
+  color: rgba(255,255,255,.65) !important;
+}
+
+/* Línea guía del árbol un poco más clara en fondo oscuro */
+.org-panel .org-children{
+  border-left-color: rgba(255,255,255,.22);
+}
+
+/* === Árbol: nombres en blanco dentro del panel oscuro === */
+.org-panel .org-root li{ 
+  color:#fff;                       /* texto plano */
+}
+
+/* Enlaces de cada organización (evitamos botones y badges) */
+.org-panel .org-root a:not(.btn):not(.badge){
+  color:#fff !important;
+  text-decoration: none;
+}
+.org-panel .org-root a:not(.btn):not(.badge):hover{
+  color:#b9ecff !important;
+}
+
+/* Si usás <summary> para abrir/cerrar nodos, pintamos el texto y el marcador */
+.org-panel summary{ color:#fff; }
+.org-panel summary::-webkit-details-marker{ filter: invert(1) opacity(.85); } /* caret en WebKit */
+.org-panel summary::marker{ color:#fff; } /* caret en Firefox */
+
+/* ==== Árbol en panel oscuro: forzar nombres en blanco ==== */
+
+/* Color base de los ítems y summary */
+.org-panel .org-root li,
+.org-panel .org-root summary{
+  color:#fff !important;
+}
+
+/* Enlaces: pisar utilidades Bootstrap que traen !important */
+.org-panel .org-root a:not(.btn):not(.badge),
+.org-panel .org-root .text-dark,
+.org-panel .org-root .link-dark,
+.org-panel .org-root .text-body,
+.org-panel .org-root .text-reset{
+  color:#fff !important;
+  text-decoration: none;
+}
+.org-panel .org-root a:not(.btn):not(.badge):hover{
+  color:#b9ecff !important;
+}
+
+/* Si algún nodo usa la “tarjetita” blanca del estilo anterior, la apagamos en el panel oscuro */
+.org-panel .org-summary{
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Marcadores/caret blancos */
+.org-panel summary::-webkit-details-marker{ filter: invert(1) opacity(.85); }
+.org-panel summary::marker{ color:#fff; }

@@ -8,9 +8,6 @@
 
     <h2 class="mb-4 text-center text-white">Listado de Usuarios</h2>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
 
     @php
         $canManage = auth()->check() && in_array(auth()->user()->rol, ['admin','superadmin']);

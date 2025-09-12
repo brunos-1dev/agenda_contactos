@@ -12,9 +12,7 @@
         $canManage = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
     @endphp
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <form action="{{ route('aplicaciones.index') }}" method="GET" class="d-flex mb-3 justify-content-between align-items-center">

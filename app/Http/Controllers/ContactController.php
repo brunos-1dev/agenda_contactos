@@ -59,13 +59,22 @@ class ContactController extends Controller
 
         // Búsqueda opcional
         if ($request->filled('search')) {
-            $s = $request->search;
+            $s = trim($request->search);
+
             $query->where(function ($q) use ($s) {
-                $q->where('nombre', 'like', "%$s%")
-                  ->orWhere('apellido', 'like', "%$s%")
-                  ->orWhere('dni', 'like', "%$s%");
+                $q->where('nombre', 'like', "%{$s}%")
+                ->orWhere('apellido', 'like', "%{$s}%")
+                ->orWhere('dni', 'like', "%{$s}%")
+                ->orWhereHas('organizacion', function ($oq) use ($s) {
+                    $oq->where('nombre', 'like', "%{$s}%");
+                });
             });
         }
+
+        $contacts = $query
+            ->with('organizacion')
+            ->paginate(15)
+            ->withQueryString();
 
         // Alcance por organización
         if (in_array($auth->rol, ['admin','consulta'])) {
