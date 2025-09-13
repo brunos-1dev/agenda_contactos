@@ -3,47 +3,43 @@
 @section('title', 'Inicio')
 
 @section('content')
-<br><br>
-<div class="text-center mt-2 mb-4">
-    <div class="text-light py-2 w-100">
-        <h1 class="text-center m-0">Sistema de Registro de Usuarios</h1>
-    </div>
+<div class="container home-wrap">
 
-    <br><br>
+  <div class="home-hero">
+    <img src="{{ asset('images/IDENTIA1.svg') }}" alt="Identia" class="home-logo">
+  </div>
 
-    @php
-        $canManageUsers = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
-    @endphp
+  @php
+      $canManageUsers = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
+  @endphp
 
-    <div class="menu-grid mt-4 mb-5">
-        <a href="{{ route('contacts.index') }}" class="menu-card">
-            <img src="{{ asset('images/persona3.png') }}" alt="Personas">
-            <div class="menu-btn-text">PERSONAS</div>
-        </a>
+  <div class="menu-grid home-grid">
+      <a href="{{ route('contacts.index') }}" class="menu-card">
+          <img src="{{ asset('images/persona3.png') }}" alt="Personas">
+          <div class="menu-btn-text">PERSONAS</div>
+      </a>
 
-        <a href="{{ route('organizaciones.index') }}" class="menu-card">
-            <img src="{{ asset('images/depto2.png') }}" alt="Organizaciones">
-            <div class="menu-btn-text">DEPARTAMENTOS</div>
-        </a>
+      <a href="{{ route('organizaciones.index') }}" class="menu-card">
+          <img src="{{ asset('images/depto2.png') }}" alt="Organizaciones">
+          <div class="menu-btn-text">ORGANIZACIONES</div>
+      </a>
 
-        <a href="{{ route('aplicaciones.index') }}" class="menu-card">
-            <img src="{{ asset('images/logo app corto.png') }}" alt="Aplicaciones">
-            <div class="menu-btn-text">APLICACIONES</div>
-        </a>
+      <a href="{{ route('aplicaciones.index') }}" class="menu-card">
+          <img src="{{ asset('images/logo app corto.png') }}" alt="Aplicaciones">
+          <div class="menu-btn-text">APLICACIONES</div>
+      </a>
 
-        {{-- Solo admin / superadmin ven USUARIOS --}}
-        @if($canManageUsers)
-            <a href="{{ route('usuarios.index') }}" class="menu-card">
-                <img src="{{ asset('images/usuarios.jpg') }}" alt="Usuarios">
-                <div class="menu-btn-text">USUARIOS</div>
-            </a>
-        @endif
-    </div>
+      @if($canManageUsers)
+          <a href="{{ route('usuarios.index') }}" class="menu-card">
+              <img src="{{ asset('images/usuarios.jpg') }}" alt="Usuarios">
+              <div class="menu-btn-text">USUARIOS</div>
+          </a>
+      @endif
+  </div>
 
-    <br><br>
-    <div class="d-flex justify-content-center align-items-center gap-4">
-        <img src="{{ asset('images/ssa_lea2.svg') }}" alt="Logo SSA" style="height: 200px;">
-        <img src="{{ asset('images/tics_lea2.svg') }}" alt="Logo TICS" style="height: 120px;">
-    </div>
+  <div class="home-logos-bottom">
+      <img src="{{ asset('images/tics_lea2.svg') }}" alt="Logo TICS">
+      <img src="{{ asset('images/ssa_lea2.svg') }}" alt="Logo SSA">
+  </div>
 </div>
 @endsection

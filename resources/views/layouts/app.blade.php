@@ -22,25 +22,26 @@
             </div>
 
             {{-- Navegación centrada --}}
-            <ul class="navbar-nav mx-auto d-flex flex-row gap-4">
-                <li class="nav-item">
-                    <a class="nav-link text-uppercase text-info fw-semibold" href="{{ url('/') }}">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('contacts.index') }}">Personas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('organizaciones.index') }}">Departamentos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('aplicaciones.index') }}">Aplicaciones</a>
-                </li>
-                @if($canManage)
-                    <li class="nav-item">
-                        <a class="nav-link text-uppercase text-info fw-semibold" href="{{ route('usuarios.index') }}">Usuarios</a>
-                    </li>
-                @endif
-            </ul>
+       <ul class="navbar-nav mx-auto d-flex flex-row gap-3">
+    <li class="nav-item">
+        <a class="nav-link nav-pill {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">Inicio</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link nav-pill {{ request()->routeIs('contacts.*') ? 'active' : '' }}" href="{{ route('contacts.index') }}">Personas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link nav-pill {{ request()->routeIs('organizaciones.*') ? 'active' : '' }}" href="{{ route('organizaciones.index') }}">Organizaciones</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link nav-pill {{ request()->routeIs('aplicaciones.*') ? 'active' : '' }}" href="{{ route('aplicaciones.index') }}">Aplicaciones</a>
+    </li>
+    @if($canManage)
+        <li class="nav-item">
+            <a class="nav-link nav-pill {{ request()->routeIs('usuarios.*') ? 'active' : '' }}" href="{{ route('usuarios.index') }}">Usuarios</a>
+        </li>
+    @endif
+</ul>
+
 
             {{-- Cerrar sesión a la derecha --}}
             @auth

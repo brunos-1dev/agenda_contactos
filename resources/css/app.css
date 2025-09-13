@@ -4,7 +4,7 @@
 
 body {
     font-family: 'Montserrat', sans-serif;
-    background-color: #1e3a8a !important;
+    background-color: #0b132b !important;   /* ← FONDO NOCHE */
     color: #f8f9fa;
     min-height: 100vh;
     margin: 0;
@@ -252,7 +252,7 @@ h4 {
 
 /* ===== Variables base ===== */
 :root{
-  --bg: #1e3a8a;      /* fondo general del sitio */
+  --bg: #1e3a8a;      /* fondo general del sitio (se usa en login-page) */
   --panel-1: #223452; /* panel oscuro */
   --panel-2: #162642; /* degradado */
   --border: #3b4a6b;  /* bordes suaves */
@@ -477,3 +477,91 @@ h4 {
 /* Marcadores/caret blancos */
 .org-panel summary::-webkit-details-marker{ filter: invert(1) opacity(.85); }
 .org-panel summary::marker{ color:#fff; }
+
+/* ===== INICIO (home) ===== */
+.home-wrap{
+  min-height: calc(100vh - 72px);   /* margen por navbar aproximado */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.home-hero{
+  padding-top: 16px;
+  text-align: center;
+}
+.home-logo{
+  height: 200px;                    /* ← tamaño del logo en inicio */
+  display: block;
+  margin: 8px auto 18px;
+}
+.home-grid{ margin-top: 6px; }
+.home-logos-bottom{
+  margin-top: 48px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  opacity: .95;
+}
+.home-logos-bottom img{ height: 140px; }
+
+/* ===== NAV – Botones "pill" con borde y brillo ===== */
+.navbar-custom .navbar-nav { gap: 10px; }
+
+.navbar-custom .nav-link.nav-pill{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .45rem 1rem;
+  border-radius: 9px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 700;
+  text-decoration: none !important;
+
+  color: #eaf2ff;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    0 6px 12px rgba(0,0,0,.25);
+  transition:
+    background .2s ease,
+    box-shadow .2s ease,
+    transform .12s ease,
+    border-color .2s ease,
+    color .2s ease;
+}
+
+.navbar-custom .nav-link.nav-pill:hover{
+  color: #ffffff;
+  border-color: #24B1FF;
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 22px rgba(36,177,255,.25),
+    inset 0 0 0 1px rgba(255,255,255,.10);
+}
+
+.navbar-custom .nav-link.nav-pill:active{
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(36,177,255,.20);
+}
+
+.navbar-custom .nav-link.nav-pill:focus{
+  outline: none;
+  box-shadow:
+    0 0 0 .15rem rgba(36,177,255,.35),
+    inset 0 0 0 1px rgba(255,255,255,.12);
+}
+
+/* Estado activo (página actual) */
+.navbar-custom .nav-link.nav-pill.active{
+  color: #05243b !important;
+  border-color: transparent;
+  background-image: linear-gradient(90deg, #00D5FF, #24B1FF 55%, #009FFD);
+  box-shadow:
+    0 10px 26px rgba(0,157,255,.35),
+    inset 0 0 0 1px rgba(255,255,255,.12);
+}

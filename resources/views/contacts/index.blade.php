@@ -8,15 +8,18 @@
 
     @php
         $canManage = in_array(auth()->user()->rol ?? 'consulta', ['admin','superadmin']);
+        // 👉 Default ahora es "list"
+        $view = request('view', 'list');
     @endphp
 
     {{-- Barra superior --}}
     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
 
-        {{-- BUSCADOR --}}
+        {{-- BUSCADOR (conserva la vista actual) --}}
         <form action="{{ route('contacts.index') }}" method="GET"
               class="d-flex align-items-center">
             <div class="d-flex">
+                <input type="hidden" name="view" value="{{ $view }}">
                 <input
                     type="text"
                     name="search"
@@ -29,26 +32,25 @@
             </div>
         </form>
 
-        {{-- Botones de acción (quedan antes del toggle) --}}
+        {{-- Botones de acción --}}
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ route('contacts.export', ['search' => request('search')]) }}"
+            <a href="{{ route('contacts.export', ['search' => request('search'), 'view' => $view]) }}"
                class="btn btn-outline-success px-4">
                 Exportar a Excel
             </a>
 
             @if($canManage)
-                <a href="{{ route('contacts.import.form') }}" class="btn btn-outline-info px-4">
+                <a href="{{ route('contacts.import.form', ['view' => $view]) }}" class="btn btn-outline-info px-4">
                     Importar
                 </a>
 
-                <a href="{{ route('contacts.create') }}" class="btn btn-outline-light px-4">
+                <a href="{{ route('contacts.create', ['view' => $view]) }}" class="btn btn-outline-light px-4">
                     Nuevo Contacto
                 </a>
             @endif
         </div>
 
-        {{-- TOGGLE VISTA (separado y a la derecha) --}}
-        @php($view = request('view', 'cards'))
+        {{-- TOGGLE VISTA (a la derecha) --}}
         <div class="ms-auto">
             <div class="btn-group btn-group-sm" role="group" aria-label="Cambiar vista">
                 <a href="{{ request()->fullUrlWithQuery(['view' => 'cards']) }}"
